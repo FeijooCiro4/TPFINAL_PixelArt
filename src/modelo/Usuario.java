@@ -50,8 +50,8 @@ public abstract class  Usuario {
     }
 
     public Usuario(String nombre, String hashContrasena, String salt, boolean activo, RolUsuarios rolUsuarios) {
-        this.contador++;
-        this.idUsuario = contador;
+        this.contadorid++;
+        this.idUsuario = contadorid;
         this.nombre = nombre;
         this.hashContrasena = hashContrasena;
         this.salt = salt;
