@@ -17,7 +17,15 @@ public class Dibujo {
 
     /// constructores
 
-    public Dibujo() {}
+    public Dibujo() {
+        this.idDibujo = 0;
+        this.idPropietario = -1;
+        this.nombreDibujo = "";
+        this.activo = false;
+        this.anchoCuadricula = 0;
+        this.clavesColores = new TreeMap<>();
+        this.cuadriculas = new HashSet<>();
+    }
 
     public Dibujo(int idDibujo, int idPropietario, String nombreDibujo, boolean activo, int anchoCuadricula) {
         this.idDibujo = idDibujo;

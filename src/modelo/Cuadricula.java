@@ -12,7 +12,11 @@ public class Cuadricula implements Comparable<Cuadricula> {
 
 
     /// constructores
-    public Cuadricula() {}
+    public Cuadricula() {
+        this.indiceX = 0;
+        this.indiceY = 0;
+        this.color = "#FFFFFF";
+    }
 
     public Cuadricula(int indiceX, int indiceY, String color) {
         this.indiceX = indiceX;

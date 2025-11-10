@@ -17,7 +17,14 @@ public abstract class  Usuario {
 
     /// Constructor
 
-    public Usuario() {}
+    public Usuario() {
+        this.idUsuario = 0;
+        this.nombre = "";
+        this.hashContrasena = "";
+        this.salt = "";
+        this.activo = false;
+        this.rolUsuarios = RolUsuarios.NORMAL;
+    }
 
     public Usuario(int idUsuario, String nombre, String hashContrasena, String salt, boolean activo, RolUsuarios rolUsuarios) {
         this.idUsuario = idUsuario;
