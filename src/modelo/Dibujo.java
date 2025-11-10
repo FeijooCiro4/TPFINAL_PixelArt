@@ -4,7 +4,6 @@ import java.util.*;
 
 public class Dibujo {
 
-
     ///  atributos
     private int idDibujo;
     private int idPropietario;
@@ -15,10 +14,10 @@ public class Dibujo {
     private HashSet<Cuadricula> cuadriculas;
 
 
+
     /// constructores
 
-    public Dibujo() {
-    }
+    public Dibujo() {}
 
     public Dibujo(int idDibujo, int idPropietario, String nombreDibujo, boolean activo, int anchoCuadricula) {
         this.idDibujo = idDibujo;
@@ -30,8 +29,19 @@ public class Dibujo {
         this.cuadriculas = new HashSet<>();
     }
 
+    public Dibujo(int idDibujo, int idPropietario, String nombreDibujo, boolean activo, int anchoCuadricula, TreeMap<Integer,String> clavesColores, HashSet<Cuadricula> cuadriculas) {
+        this.idDibujo = idDibujo;
+        this.idPropietario = idPropietario;
+        this.nombreDibujo = nombreDibujo;
+        this.activo = activo;
+        this.anchoCuadricula = anchoCuadricula;
+        this.clavesColores = clavesColores;
+        this.cuadriculas = cuadriculas;
+    }
 
-    /// getter y setters
+
+
+    /// getters y setters
 
     public int getIdDibujo() {
         return idDibujo;
@@ -90,21 +100,21 @@ public class Dibujo {
     }
 
 
+
+    // Métodos para clavesColores
+
     public boolean insertarColor(String color)
     {
         if (clavesColores.containsValue(color))
         {
             return false;
-        } // si retorna false es porque ya existe el color en el map
+        }
 
-        int claveaux = clavesColores.size() + 1;
-        // como no le llega un parametro de la clave se lo pongo asi
+        int claveAux = clavesColores.size() + 1;
 
-        clavesColores.put(claveaux, color);
-
+        clavesColores.put(claveAux, color);
         return true;
     }
-
 
     public boolean eliminarColor(String color)
     {
@@ -115,23 +125,17 @@ public class Dibujo {
             if (entry.getValue().equalsIgnoreCase(color))
             {
                 claveColor = entry.getKey();
-
                 break;
             }
         }
 
-        if (claveColor !=null)
+        if (claveColor != null)
         {
             clavesColores.remove(claveColor);
-
             return true;
         }
-
         return false;
-
     }
-
-
 
     public boolean estaColorEnMap(String color)
     {
@@ -140,8 +144,7 @@ public class Dibujo {
 
 
 
-/// metodos de la cuadricula
-
+    /// metodos de la cuadricula
 
     public boolean buscarCuadricula(int indiceX, int indiceY)
     {
@@ -155,42 +158,32 @@ public class Dibujo {
         return false;
     }
 
-
-
-    public String colorCuadricula(int indiceX, int indiceY) // aca me retorna el color de la cuadricula
+    public String colorCuadricula(int indiceX, int indiceY)
     {
-
         for (Cuadricula c : cuadriculas)
         {
             if (c.getIndiceX() == indiceX && c.getIndiceY() == indiceY)
             {
-
                 return c.getColor();
-
             }
         }
-        return "Sin color en la cuadricula";
+        return "#0000"; // Cuando no se encuantra color en una cuadrícula, el color por defecto siempre será blanco
     }
 
-
-    public boolean cambiarColorCuadricula(int indiceX, int indiceY, String color) // aca le meti el color como parametro porque no estaba en el diagrama pero no se si lo quieren asi.
+    public boolean cambiarColorCuadricula(int indiceX, int indiceY, String color)
     {
-        for (Cuadricula c : cuadriculas)
-        {
+        for (Cuadricula c : cuadriculas) {
             if (c.getIndiceX() == indiceX && c.getIndiceY() == indiceY)
             {
                 c.setColor(color);
-
                 return true;
             }
         }
-
         return false;
     }
 
-
-    public boolean eliminarCuadricula(int indiceX, int indiceY) {
-
+    public boolean eliminarCuadricula(int indiceX, int indiceY)
+    {
         Iterator<Cuadricula> iterator = cuadriculas.iterator();
 
         while (iterator.hasNext())
@@ -200,13 +193,15 @@ public class Dibujo {
             if (c.getIndiceX() == indiceX && c.getIndiceY() == indiceY)
             {
                 iterator.remove();
-
                 return true;
             }
         }
         return false;
     }
 
+
+
+    // Overrides
 
     @Override
     public boolean equals(Object o) {

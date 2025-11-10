@@ -4,27 +4,20 @@ import java.util.Objects;
 
 public abstract class  Usuario {
 
-
     /// Atributos
 
     private int idUsuario;
-
     private String nombre;
-
     private String hashContrasena;
-
     private String salt;
-
     private boolean activo;
-
     private RolUsuarios rolUsuarios;
+
 
 
     /// Constructor
 
-    public Usuario() {
-    }
-
+    public Usuario() {}
 
     public Usuario(int idUsuario, String nombre, String hashContrasena, String salt, boolean activo, RolUsuarios rolUsuarios) {
         this.idUsuario = idUsuario;
@@ -39,11 +32,9 @@ public abstract class  Usuario {
 
     /// getter y setters
 
-
     public int getIdUsuario() {
         return idUsuario;
     }
-
 
     public String getNombre() {
         return nombre;
@@ -57,11 +48,9 @@ public abstract class  Usuario {
         return hashContrasena;
     }
 
-
     public String getSalt() {
         return salt;
     }
-
 
     public boolean isActivo() {
         return activo;

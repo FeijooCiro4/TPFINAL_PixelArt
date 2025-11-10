@@ -4,32 +4,36 @@ import java.util.HashSet;
 
 public class UsuarioNormal extends Usuario {
 
-
     /// atributos
 
     private boolean puedeCrear;
-
     private HashSet<Integer> dibujosCreados;
-
     private HashSet<Integer> dibujosPintados;
 
 
 
     /// Constructor
 
-
     public UsuarioNormal() {                 // aca inicializo los set por las dudas
+        super();
+        this.puedeCrear = false;
         this.dibujosCreados = new HashSet<>();
         this.dibujosPintados = new HashSet<>();
     }
 
     public UsuarioNormal(boolean puedeCrear) {
-
+        super();
         this.puedeCrear = puedeCrear;
         this.dibujosCreados = new HashSet<>();
         this.dibujosPintados = new HashSet<>();
     }
 
+    public UsuarioNormal(boolean puedeCrear, HashSet<Integer> dibujosCreados, HashSet<Integer> dibujosPintados) {
+        super();
+        this.puedeCrear = puedeCrear;
+        this.dibujosCreados = dibujosCreados;
+        this.dibujosPintados = dibujosPintados;
+    }
 
     public UsuarioNormal(int idUsuario, String nombre, String hashContrasena, String salt, boolean activo, RolUsuarios rolUsuarios, boolean puedeCrear) {
         super(idUsuario, nombre, hashContrasena, salt, activo, rolUsuarios);
@@ -38,13 +42,16 @@ public class UsuarioNormal extends Usuario {
         this.dibujosPintados = new HashSet<>();
     }
 
-
-
+    public UsuarioNormal(int idUsuario, String nombre, String hashContrasena, String salt, boolean activo, RolUsuarios rolUsuarios, boolean puedeCrear, HashSet<Integer> dibujosCreados, HashSet<Integer> dibujosPintados) {
+        super(idUsuario, nombre, hashContrasena, salt, activo, rolUsuarios);
+        this.puedeCrear = puedeCrear;
+        this.dibujosCreados = dibujosCreados;
+        this.dibujosPintados = dibujosPintados;
+    }
 
 
 
     ///  getter y setters
-
 
     public boolean isPuedeCrear() {
         return puedeCrear;
@@ -72,9 +79,7 @@ public class UsuarioNormal extends Usuario {
 
 
 
-
     /// metodos de DIBUJO CREADO
-
 
     public boolean ingresarIdDibujoCreado(int idDibujoCreado)
     {
@@ -95,7 +100,6 @@ public class UsuarioNormal extends Usuario {
 
     /// metodos de DIBUJO PINTADO
 
-
     public boolean ingresarIdDibujoPintado(int idDibujoPintado)
     {
         return dibujosPintados.add(idDibujoPintado);
@@ -110,7 +114,6 @@ public class UsuarioNormal extends Usuario {
     {
         return dibujosPintados.contains(idDibujo);
     }
-
 
 
 
@@ -131,9 +134,4 @@ public class UsuarioNormal extends Usuario {
             System.out.println("\nID dibujo pintado: " + id);
         }
     }
-
-
-
-
-
 }

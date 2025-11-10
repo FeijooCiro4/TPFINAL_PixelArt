@@ -8,30 +8,31 @@ import java.util.TreeMap;
 
 public class UsuarioAdministrador extends Usuario {
 
-
     /// atributos
 
     private PermisosAdmin nivelAdmin;
-
     private TreeMap<LocalDateTime,String> registroAcciones;
 
 
 
     /// Constructor
 
-
     public UsuarioAdministrador() {
+        super();
+        this.nivelAdmin = PermisosAdmin.VISUALIZANTE;
         this.registroAcciones = new TreeMap<>();
     }
 
-    public UsuarioAdministrador(PermisosAdmin nivelAdmin) { // hago este porque en el uml aparece con el treemap y me resulto raro
+    public UsuarioAdministrador(PermisosAdmin nivelAdmin) {
+        super();
         this.nivelAdmin = nivelAdmin;
         this.registroAcciones = new TreeMap<>();
     }
 
     public UsuarioAdministrador(PermisosAdmin nivelAdmin, TreeMap<LocalDateTime, String> registroAcciones) {
+        super();
         this.nivelAdmin = nivelAdmin;
-        this.registroAcciones = new TreeMap<>();
+        this.registroAcciones = registroAcciones;   // Acá simplemente se te pasó asignarle el parámetro registroAcciones al atributo de la clase
     }
 
     public UsuarioAdministrador(int idUsuario, String nombre, String hashContrasena, String salt, boolean activo, RolUsuarios rolUsuarios, PermisosAdmin nivelAdmin) // este lo hago por si tambien se necesitaba
@@ -41,8 +42,15 @@ public class UsuarioAdministrador extends Usuario {
         this.registroAcciones = new TreeMap<>();
     }
 
-    /// getter y setters
+    /*
+    * He añadido los métodos super() para que quede claro que
+    * se dirigen al constructor vacío de la clase padre Usuario.
+    * Tus desiciones de diseño me resultaron muy asertadas, bien ahí.
+    * */
 
+
+
+    /// getter y setters
 
     public PermisosAdmin getNivelAdmin() {
         return nivelAdmin;
@@ -61,29 +69,24 @@ public class UsuarioAdministrador extends Usuario {
     }
 
 
+
     /// metodos para el registro de las acciones
 
-
     public boolean ingresarAccionAlRegistro(String accion) {
-
         LocalDateTime fechahora = LocalDateTime.now();
 
         if (!registroAcciones.containsKey(fechahora))
         {
             registroAcciones.put(fechahora, accion);
-
             return true;
         }
-
         return false; // si la clave de la accion es igual no la ingresa y devuelve false (no se si necesitaran comprobar eso pero por las dudas lo hago asi)
     }
-
 
     public boolean eliminarAccionDelRegistro(LocalDateTime fechaHora, String accion)
     {
        return registroAcciones.remove(fechaHora,accion);
     }
-
 
     public List<String> buscarAcciones(int anio, int mes, int dia)
     {
@@ -100,23 +103,6 @@ public class UsuarioAdministrador extends Usuario {
                 accionEncontrada.add(entrada.getValue());
             }
         }
-
         return accionEncontrada;
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
