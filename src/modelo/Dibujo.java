@@ -6,6 +6,7 @@ public class Dibujo {
 
 
     ///  atributos
+    private static int contadorID=0;
     private int idDibujo;
     private int idPropietario;
     private String nombreDibujo;
@@ -20,8 +21,9 @@ public class Dibujo {
     public Dibujo() {
     }
 
-    public Dibujo(int idDibujo, int idPropietario, String nombreDibujo, boolean activo, int anchoCuadricula) {
-        this.idDibujo = idDibujo;
+    public Dibujo(int idPropietario, String nombreDibujo, boolean activo, int anchoCuadricula) {
+        this.contadorID++;
+        this.idDibujo = contadorID;
         this.idPropietario = idPropietario;
         this.nombreDibujo = nombreDibujo;
         this.activo = activo;
