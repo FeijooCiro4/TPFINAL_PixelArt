@@ -1,4 +1,6 @@
-package modelo;
+package models;
+
+import enumerators.RolUsuarios;
 
 import java.util.HashSet;
 
@@ -83,16 +85,19 @@ public class UsuarioNormal extends Usuario {
 
     public boolean ingresarIdDibujoCreado(int idDibujoCreado)
     {
+        if(!puedeCrear) return false;
         return dibujosCreados.add(idDibujoCreado);
     }
 
     public boolean eliminarDibujoCreado(int idDibujoCreado)
     {
+        if(!puedeCrear) return false;
         return dibujosCreados.remove(idDibujoCreado);
     }
 
     public boolean buscarDibujoCreado(int idDibujo)
     {
+        if(!puedeCrear) return false;
         return dibujosCreados.contains(idDibujo);
     }
 
@@ -117,7 +122,7 @@ public class UsuarioNormal extends Usuario {
 
 
 
-    /// recorrer el hashset // solo para prueba
+    /// recorrer el hashset -> solo para prueba
 
     public void mostrarHashsetDibuCreados()
     {
@@ -133,5 +138,14 @@ public class UsuarioNormal extends Usuario {
         {
             System.out.println("\nID dibujo pintado: " + id);
         }
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + "\nUsuarioNormal{" +
+                "puedeCrear=" + puedeCrear +
+                ", dibujosCreados=" + dibujosCreados +
+                ", dibujosPintados=" + dibujosPintados +
+                '}';
     }
 }

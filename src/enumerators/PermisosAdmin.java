@@ -1,4 +1,4 @@
-package modelo;
+package enumerators;
 
 public enum PermisosAdmin {
     SUPERADMIN,

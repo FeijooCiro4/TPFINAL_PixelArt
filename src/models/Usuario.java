@@ -1,4 +1,6 @@
-package modelo;
+package models;
+
+import enumerators.RolUsuarios;
 
 import java.util.Objects;
 
@@ -89,5 +91,17 @@ public abstract class  Usuario {
     @Override
     public int hashCode() {
         return Objects.hash(idUsuario, nombre, hashContrasena, salt, activo, rolUsuarios);
+    }
+
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                "idUsuario=" + idUsuario +
+                ", nombre='" + nombre + '\'' +
+                ", hashContrasena='" + hashContrasena + '\'' +
+                ", salt='" + salt + '\'' +
+                ", activo=" + activo +
+                ", rolUsuarios=" + rolUsuarios +
+                '}';
     }
 }

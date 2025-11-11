@@ -1,4 +1,4 @@
-package modelo;
+package models;
 
 import java.util.Objects;
 
@@ -76,5 +76,14 @@ public class Cuadricula implements Comparable<Cuadricula> {
             return Integer.compare(this.indiceX, cuadricula.indiceX);
         }
         return Integer.compare(this.indiceY, cuadricula.indiceY);
+    }
+
+    @Override
+    public String toString() {
+        return "Cuadricula{" +
+                "indiceX=" + indiceX +
+                ", indiceY=" + indiceY +
+                ", color='" + color + '\'' +
+                '}';
     }
 }

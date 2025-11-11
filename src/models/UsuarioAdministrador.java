@@ -1,4 +1,8 @@
-package modelo;
+package models;
+
+import enumerators.PermisosAdmin;
+import enumerators.RolUsuarios;
+import exceptions.MissingKeyOrValueException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -102,5 +106,13 @@ public class UsuarioAdministrador extends Usuario {
             }
         }
         return accionEncontrada;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + "\nUsuarioAdministrador{" +
+                "nivelAdmin=" + nivelAdmin +
+                ", registroAcciones=" + registroAcciones +
+                '}';
     }
 }

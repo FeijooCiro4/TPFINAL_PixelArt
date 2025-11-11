@@ -1,4 +1,7 @@
-package modelo;
+package models;
+
+import exceptions.MissingKeyOrValueException;
+import exceptions.MissingSearchException;
 
 import java.util.*;
 
@@ -25,6 +28,7 @@ public class Dibujo {
         this.anchoCuadricula = 0;
         this.clavesColores = new TreeMap<>();
         this.cuadriculas = new HashSet<>();
+        inicializarColoresPorDefecto();
     }
 
     public Dibujo(int idDibujo, int idPropietario, String nombreDibujo, boolean activo, int anchoCuadricula) {
@@ -35,6 +39,7 @@ public class Dibujo {
         this.anchoCuadricula = anchoCuadricula;
         this.clavesColores = new TreeMap<>();
         this.cuadriculas = new HashSet<>();
+        inicializarColoresPorDefecto();
     }
 
     public Dibujo(int idDibujo, int idPropietario, String nombreDibujo, boolean activo, int anchoCuadricula, TreeMap<Integer,String> clavesColores, HashSet<Cuadricula> cuadriculas) {
@@ -45,6 +50,12 @@ public class Dibujo {
         this.anchoCuadricula = anchoCuadricula;
         this.clavesColores = clavesColores;
         this.cuadriculas = cuadriculas;
+        inicializarColoresPorDefecto();
+    }
+
+    private void inicializarColoresPorDefecto() {       // Fragmento de código del proyecto de David
+        clavesColores.put(0, "#FFFFFF");
+        clavesColores.put(1, "#000000");
     }
 
 
@@ -113,20 +124,25 @@ public class Dibujo {
 
     public void insertarColor(String color) throws MissingKeyOrValueException
     {
-        if (clavesColores.containsValue(color))
-        {
+        // Mejora de la lógica de insercion basada en el codigo de David
+        if(!validarEntradaColor(color)) {
+            throw new MissingKeyOrValueException("El color ingresado es invalido");
+        } else if (estaColorEnMap(color)) {
             throw new MissingKeyOrValueException("El color debe ser unico en la seleccion");
-        } else if(color.equals("#FFFFFF"))
-        {
+        } else if(color.equals("#FFFFFF")) {
             throw new MissingKeyOrValueException("El color blanco no puede ser añadidio a la seleccion");
         }
 
-        int claveAux = clavesColores.size() + 1;
-        clavesColores.put(claveAux, color);
+        int claveAux = clavesColores.isEmpty() ? 0 : clavesColores.lastKey() + 1;
+        clavesColores.put(claveAux, color.toUpperCase());
     }
 
     public void eliminarColor(String color) throws MissingKeyOrValueException
     {
+        if(!validarEntradaColor(color)) {
+            throw new MissingKeyOrValueException("El color no tiene un formato valido");
+        }
+
        Integer claveColor = null;
 
        for (Map.Entry<Integer, String> entry : clavesColores.entrySet()) {
@@ -136,17 +152,11 @@ public class Dibujo {
            }
        }
 
-       if (claveColor == null)
-       {
+       if (claveColor == null) {
            throw new MissingKeyOrValueException("El color ingresado no se encuentra en la seleccion");
        }
 
        clavesColores.remove(claveColor);
-    }
-
-    public boolean estaColorEnMap(String color)
-    {
-        return clavesColores.containsValue(color);
     }
 
 
@@ -174,18 +184,19 @@ public class Dibujo {
                 return c.getColor();
             }
         }
-        return "#FFFFFF"; // Cuando no se encuantra color en una cuadrícula, el color por defecto siempre será blanco
+        return "#FFFFFF";
     }
 
     public void cambiarColorCuadricula(int indiceX, int indiceY, String color) throws MissingSearchException
     {
         boolean value = false;
 
-        for (Cuadricula c : cuadriculas) {
-            if (c.getIndiceX() == indiceX && c.getIndiceY() == indiceY)
-            {
-                c.setColor(color);
-                value = true;
+        if(validarEntradaColor(color)) {
+            for (Cuadricula c : cuadriculas) {
+                if (c.getIndiceX() == indiceX && c.getIndiceY() == indiceY) {
+                    c.setColor(color);
+                    value = true;
+                }
             }
         }
 
@@ -194,21 +205,28 @@ public class Dibujo {
 
     public void eliminarCuadricula(int indiceX, int indiceY) throws MissingSearchException
     {
-        Iterator<Cuadricula> iterator = cuadriculas.iterator();
-        boolean value = false;
-
-        while (iterator.hasNext())
-        {
-            Cuadricula c = iterator.next();
-
-            if (c.getIndiceX() == indiceX && c.getIndiceY() == indiceY)
-            {
-                iterator.remove();
-                value = true;
-            }
-        }
+        // Fragmento de codigo basado en el codigo de David
+        boolean value = cuadriculas.removeIf(c ->
+                c.getIndiceX() == indiceX && c.getIndiceY() == indiceY
+        );
 
         if(!value) throw new MissingSearchException("La posicion indicada no existe en el dibujo");
+    }
+
+    public void limpiarDibujo() {   // Fragmento de código de David
+        cuadriculas.clear();
+    }
+
+
+    // Validaciones
+
+    public boolean estaColorEnMap(String color)
+    {
+        return validarEntradaColor(color) && clavesColores.containsValue(color);
+    }
+
+    private boolean validarEntradaColor(String color){
+        return !(color == null || color.isEmpty() || !color.matches("^#[0-9A-Fa-f]{6}$"));
     }
 
 
@@ -227,8 +245,16 @@ public class Dibujo {
         return Objects.hash(idDibujo);
     }
 
-
-
-
-
+    @Override
+    public String toString() {
+        return "Dibujo{" +
+                "idDibujo=" + idDibujo +
+                ", idPropietario=" + idPropietario +
+                ", nombreDibujo='" + nombreDibujo + '\'' +
+                ", activo=" + activo +
+                ", anchoCuadricula=" + anchoCuadricula +
+                ", clavesColores=" + clavesColores +
+                ", cuadriculas=" + cuadriculas +
+                '}';
+    }
 }
