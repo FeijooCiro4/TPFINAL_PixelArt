@@ -1,4 +1,5 @@
-package modelo;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.*;
 
@@ -30,6 +31,28 @@ public class Dibujo {
         this.anchoCuadricula = anchoCuadricula;
         this.clavesColores = new TreeMap<>();
         this.cuadriculas = new HashSet<>();
+    }
+
+    public Dibujo(JSONObject x){
+        this.idDibujo=x.getInt("idDibujo");
+        this.idPropietario=x.getInt("idPropietario");
+        this.nombreDibujo=x.getString("nombreDibujo");
+        this.activo=x.getBoolean("activo");
+        this.anchoCuadricula=x.getInt("anchoCuadricula");
+        JSONArray arr=x.getJSONArray("clavesColores");
+        for(int i=0;i<arr.length();i++){
+            JSONObject json=arr.getJSONObject(i);
+            int clave= json.getInt("idColor");
+            String color=json.getString("color");
+            this.clavesColores.put(clave,color);
+        }
+        JSONArray arr2=x.getJSONArray("cuadriculas");
+        for(int i=0;i<arr2.length();i++){
+            JSONObject json=arr2.getJSONObject(i);
+            Cuadricula c= new Cuadricula(json);
+            this.cuadriculas.add(c);
+        }
+
     }
 
 
@@ -110,7 +133,7 @@ public class Dibujo {
 
     public boolean eliminarColor(String color)
     {
-       Integer claveColor = null;
+        Integer claveColor = null;
 
         for (Map.Entry<Integer,String> entry : clavesColores.entrySet())
         {
@@ -142,7 +165,7 @@ public class Dibujo {
 
 
 
-/// metodos de la cuadricula
+    /// metodos de la cuadricula
 
 
     public boolean buscarCuadricula(int indiceX, int indiceY)
@@ -221,9 +244,6 @@ public class Dibujo {
     public int hashCode() {
         return Objects.hash(idDibujo);
     }
-
-
-
 
 
 }

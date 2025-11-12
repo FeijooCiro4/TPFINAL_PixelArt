@@ -1,4 +1,4 @@
-package modelo;
+import org.json.JSONObject;
 
 import java.util.Objects;
 
@@ -17,6 +17,11 @@ public class Cuadricula implements Comparable<Cuadricula> {
     public Cuadricula() {
     }
 
+    public Cuadricula(JSONObject json) {
+        this.indiceX = json.getInt("indiceX");
+        this.indiceY = json.getInt("indiceY");
+        this.color = json.getString("color");
+    }
 
     public Cuadricula(int indiceX, int indiceY, String color) {
         this.indiceX = indiceX;

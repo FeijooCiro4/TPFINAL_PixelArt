@@ -1,4 +1,5 @@
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -9,7 +10,7 @@ import java.io.IOException;
 
 public class OpLectoEscritura {
 
-    public static void grabar(JSONArray x, String nombreArch){
+    public static void grabar(String nombreArch, JSONArray x){
         try (FileWriter fw = new FileWriter(nombreArch)){
             fw.write(x.toString(4));
         } catch (IOException e) {
@@ -17,7 +18,7 @@ public class OpLectoEscritura {
         }
     }
 
-    public static void grabar(JSONObject x, String nombreArch){
+    public static void grabar(String nombreArch, JSONObject x){
         try (FileWriter fw = new FileWriter(nombreArch)){
             fw.write(x.toString(4));
         } catch (IOException e) {
@@ -30,7 +31,9 @@ public class OpLectoEscritura {
         try {
             token=new JSONTokener(new FileReader(nombreArch));
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         return token;
     }
