@@ -1,8 +1,8 @@
 package models;
 
 public class ContraseniaHash {
-    public String hash;
-    public String salt;
+    private String hash;
+    private String salt;
 
     public ContraseniaHash(){
         this.hash = "";

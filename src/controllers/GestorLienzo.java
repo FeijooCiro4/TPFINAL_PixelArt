@@ -35,18 +35,21 @@ public class GestorLienzo {
     public GestorLienzo() {
         this.tamanioActual = 32;
         this.colorSeleccionado = "#000000";
+        this.paraPintar = false;
         this.dibujo = new Dibujo();
     }
 
     public GestorLienzo(Dibujo dibujo) {
         this.tamanioActual = 32;
         this.colorSeleccionado = "#000000";
+        this.paraPintar = true;
         this.dibujo = dibujo != null ? dibujo : new Dibujo();
     }
 
-    public GestorLienzo(int tamanioActual, String colorSeleccionado, Dibujo dibujo) {
+    public GestorLienzo(int tamanioActual, String colorSeleccionado, boolean paraPintar, Dibujo dibujo) {
         this.tamanioActual = validarTamanioIngresado(tamanioActual) ? tamanioActual : 32;
         this.colorSeleccionado = validarColorIngresado(colorSeleccionado) ? colorSeleccionado : "#000000";
+        this.paraPintar = paraPintar;
         this.dibujo = dibujo != null ? dibujo : new Dibujo();
     }
 
