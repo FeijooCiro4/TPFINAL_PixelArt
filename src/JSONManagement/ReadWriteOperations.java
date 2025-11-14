@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -30,14 +31,12 @@ public class ReadWriteOperations {
         }
     }
 
-    public static JSONTokener readFile(String fileName){
-        JSONTokener tokener = null;
+    public static JSONTokener readFile(String fileName) throws FileNotFoundException {
+        return new JSONTokener(new FileReader(fileName));
+    }
 
-        try {
-            tokener = new JSONTokener(new FileReader(fileName));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return tokener;
+    public static boolean archivoExiste(String fileName) {
+        File file = new File(fileName);
+        return file.exists();
     }
 }

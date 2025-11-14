@@ -1,6 +1,7 @@
 package controllers;
 
 import JSONManagement.DataAccessObjects.DibujoDAO;
+import JSONManagement.ReadWriteOperations;
 import models.Dibujo;
 
 import java.util.ArrayList;
@@ -9,10 +10,10 @@ public class GestorArchivoDibujo {
     private static final String NAME_FILE = "Dibujos.json";
 
     private final DibujoDAO dibujoDAO = new DibujoDAO();
-    private ArrayList<Dibujo> dibusjosGuardados;
+    private ArrayList<Dibujo> dibusjosGuardados = new ArrayList<>();
 
     public GestorArchivoDibujo(){
-        actualizarLista();
+        if(ReadWriteOperations.archivoExiste(NAME_FILE)) actualizarLista();
     }
 
     public void crearDibujo(int idPropietario, String nombreDibujo, boolean activo, int anchoCuadricula){

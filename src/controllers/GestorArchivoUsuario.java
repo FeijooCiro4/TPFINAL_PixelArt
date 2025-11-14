@@ -2,6 +2,7 @@ package controllers;
 
 import JSONManagement.DataAccessObjects.UsuarioAdministradorDAO;
 import JSONManagement.DataAccessObjects.UsuarioNormalDAO;
+import JSONManagement.ReadWriteOperations;
 import enumerators.PermisosAdmin;
 import enumerators.RolUsuarios;
 import models.ContraseniaHash;
@@ -24,7 +25,13 @@ public class GestorArchivoUsuario {
     private HashSet<Usuario> usuariosTotales = new HashSet<>();
 
     public GestorArchivoUsuario(){
-        actualizarListas();
+        if(ReadWriteOperations.archivoExiste(NAME_FILE_ADMINS)) {
+            actualizarListaAdmins();
+        }
+
+        if(ReadWriteOperations.archivoExiste(NAME_FILE_ADMINS)){
+            actualizarListaUsuariosNormales();
+        }
     }
 
     public boolean crearUsuarioNormal(String nombre, String contrasenia, boolean activo, RolUsuarios rolUsuarios, boolean puedeCrear){
@@ -41,7 +48,7 @@ public class GestorArchivoUsuario {
             );
 
             guardarCambios();
-            actualizarListas();
+            actualizarListaUsuariosNormales();
             return true;
         }
 
@@ -62,7 +69,7 @@ public class GestorArchivoUsuario {
             );
 
             guardarCambios();
-            actualizarListas();
+            actualizarListaAdmins();
             return true;
         }
 
@@ -76,7 +83,7 @@ public class GestorArchivoUsuario {
             administradores.remove(administradorAModificar);
             administradores.add(administradorModificado);
             guardarCambios();
-            actualizarListas();
+            actualizarListaAdmins();
         }
     }
 
@@ -87,7 +94,7 @@ public class GestorArchivoUsuario {
             normales.remove(normalAModificar);
             normales.add(normalModificado);
             guardarCambios();
-            actualizarListas();
+            actualizarListaUsuariosNormales();
         }
     }
 
@@ -97,7 +104,7 @@ public class GestorArchivoUsuario {
         if(administradorAEliminar != null){
             administradores.remove(administradorAEliminar);
             guardarCambios();
-            actualizarListas();
+            actualizarListaAdmins();
         }
     }
 
@@ -107,7 +114,7 @@ public class GestorArchivoUsuario {
         if(normalAEliminar != null){
             normales.remove(normalAEliminar);
             guardarCambios();
-            actualizarListas();
+            actualizarListaUsuariosNormales();
         }
     }
 
@@ -230,7 +237,7 @@ public class GestorArchivoUsuario {
             usuarioNormal.ingresarIdDibujoPintado(idDibujo);
 
             guardarCambios();
-            actualizarListas();
+            actualizarListaUsuariosNormales();
         }
     }
 
@@ -241,7 +248,7 @@ public class GestorArchivoUsuario {
             usuarioNormal.ingresarIdDibujoCreado(idDibujo);
 
             guardarCambios();
-            actualizarListas();
+            actualizarListaUsuariosNormales();
         }
     }
 
@@ -252,7 +259,7 @@ public class GestorArchivoUsuario {
             usuarioNormal.eliminarDibujoPintado(idDibujo);
 
             guardarCambios();
-            actualizarListas();
+            actualizarListaUsuariosNormales();
         }
     }
 
@@ -263,7 +270,7 @@ public class GestorArchivoUsuario {
             usuarioNormal.eliminarDibujoCreado(idDibujo);
 
             guardarCambios();
-            actualizarListas();
+            actualizarListaUsuariosNormales();
         }
     }
 
@@ -308,12 +315,19 @@ public class GestorArchivoUsuario {
     }
 
     private void actualizarListas(){
-        this.administradores = (ArrayList<UsuarioAdministrador>) usuarioAdministradorDAO.fileToList(NAME_FILE_ADMINS);
-        this.normales = (ArrayList<UsuarioNormal>) usuarioNormalDAO.fileToList(NAME_FILE_USERS);
-
         this.usuariosTotales.clear();
 
         this.usuariosTotales.addAll(administradores);
         this.usuariosTotales.addAll(normales);
+    }
+
+    private void actualizarListaAdmins(){
+        this.administradores = (ArrayList<UsuarioAdministrador>) usuarioAdministradorDAO.fileToList(NAME_FILE_ADMINS);
+        actualizarListas();
+    }
+
+    private void actualizarListaUsuariosNormales(){
+        this.normales = (ArrayList<UsuarioNormal>) usuarioNormalDAO.fileToList(NAME_FILE_USERS);
+        actualizarListas();
     }
 }

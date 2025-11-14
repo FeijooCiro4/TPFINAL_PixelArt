@@ -32,7 +32,7 @@ public class DibujoDAO implements ITranslatorDAO<Dibujo>{
         try {
             tokener = ReadWriteOperations.readFile(fileName);
             dibujo = dibujoMapper.jsonObjectToObject(new JSONObject(tokener));
-        } catch (JSONException e){
+        } catch (JSONException | FileNotFoundException e){
             e.printStackTrace();
         }
 
@@ -47,7 +47,7 @@ public class DibujoDAO implements ITranslatorDAO<Dibujo>{
         try {
             tokener = ReadWriteOperations.readFile(fileName);
             dibujos = dibujoMapper.jsonArrayToList(new JSONArray(tokener));
-        } catch (JSONException e){
+        } catch (JSONException | FileNotFoundException e){
             e.printStackTrace();
         }
 

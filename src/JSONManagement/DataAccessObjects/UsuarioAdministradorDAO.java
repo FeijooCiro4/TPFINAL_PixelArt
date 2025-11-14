@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 public class UsuarioAdministradorDAO implements ITranslatorDAO<UsuarioAdministrador>{
@@ -33,7 +34,7 @@ public class UsuarioAdministradorDAO implements ITranslatorDAO<UsuarioAdministra
         try {
             tokener = ReadWriteOperations.readFile(fileName);
             usuarioAdministrador = usuarioAdministradorMapper.jsonObjectToObject(new JSONObject(tokener));
-        } catch (JSONException e){
+        } catch (JSONException | FileNotFoundException e){
             e.printStackTrace();
         }
 
@@ -48,7 +49,7 @@ public class UsuarioAdministradorDAO implements ITranslatorDAO<UsuarioAdministra
         try {
             tokener = ReadWriteOperations.readFile(fileName);
             usuarioAdministradores = usuarioAdministradorMapper.jsonArrayToList(new JSONArray(tokener));
-        } catch (JSONException e){
+        } catch (JSONException | FileNotFoundException e){
             e.printStackTrace();
         }
 
