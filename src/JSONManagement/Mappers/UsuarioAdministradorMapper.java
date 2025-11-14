@@ -26,7 +26,7 @@ public class UsuarioAdministradorMapper extends AbstractMapper<UsuarioAdministra
             jsonObject.put("contraseniaHash",
                     contraseniaHashMapper.objectToJSONObject(usuarioAdministrador.getHashContrasena()));
             jsonObject.put("activo", usuarioAdministrador.isActivo());
-            jsonObject.put("RolUsuarios", usuarioAdministrador.getRolUsuarios());
+            jsonObject.put("RolUsuario", usuarioAdministrador.getRolUsuarios());
 
             jsonObject.put("PermisosAdmin", usuarioAdministrador.getNivelAdmin());
             jsonObject.put("registroAcciones",
@@ -50,9 +50,11 @@ public class UsuarioAdministradorMapper extends AbstractMapper<UsuarioAdministra
             usuarioAdministrador.setHashContrasena(contraseniaHashMapper.jsonObjectToObject(
                     jsonObject.getJSONObject("contraseniaHash")));
             usuarioAdministrador.setActivo(jsonObject.getBoolean("activo"));
-            usuarioAdministrador.setRolUsuarios((RolUsuarios) jsonObject.get("RolUsuario"));
+            String rolString = jsonObject.getString("RolUsuario");
+            usuarioAdministrador.setRolUsuarios(RolUsuarios.valueOf(rolString));
 
-            usuarioAdministrador.setNivelAdmin((PermisosAdmin) jsonObject.get("PermisosAdmin"));
+            String permisoStr = jsonObject.getString("PermisosAdmin");
+            usuarioAdministrador.setNivelAdmin(PermisosAdmin.valueOf(permisoStr));
             usuarioAdministrador.setRegistroAcciones((TreeMap<LocalDateTime, String>) CollectionsMapper.jsonObjectToMap(
                             jsonObject.getJSONObject("registroAcciones"), LocalDateTime.class, String.class));
         } catch (JSONException e){

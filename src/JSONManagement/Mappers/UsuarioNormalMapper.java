@@ -24,7 +24,7 @@ public class UsuarioNormalMapper extends AbstractMapper<UsuarioNormal>{
             jsonObject.put("contraseniaHash",
                     contraseniaHashMapper.objectToJSONObject(usuarioNormal.getHashContrasena()));
             jsonObject.put("activo", usuarioNormal.isActivo());
-            jsonObject.put("RolUsuarios", usuarioNormal.getRolUsuarios());
+            jsonObject.put("RolUsuario", usuarioNormal.getRolUsuarios());
 
             jsonObject.put("puedeCrear", usuarioNormal.isPuedeCrear());
             jsonObject.put("dibujosCreados", CollectionsMapper.setToJSONArray(usuarioNormal.getDibujosCreados()));
@@ -48,7 +48,8 @@ public class UsuarioNormalMapper extends AbstractMapper<UsuarioNormal>{
             usuarioNormal.setHashContrasena(contraseniaHashMapper.jsonObjectToObject(
                     jsonObject.getJSONObject("contraseniaHash")));
             usuarioNormal.setActivo(jsonObject.getBoolean("activo"));
-            usuarioNormal.setRolUsuarios((RolUsuarios) jsonObject.get("RolUsuario"));
+            String rolString = jsonObject.getString("RolUsuario");
+            usuarioNormal.setRolUsuarios(RolUsuarios.valueOf(rolString));
 
             usuarioNormal.setPuedeCrear(jsonObject.getBoolean("puedeCrear"));
             usuarioNormal.setDibujosCreados((HashSet<Integer>)

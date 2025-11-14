@@ -21,7 +21,7 @@ public class GestorArchivoUsuario {
     private final UsuarioAdministradorDAO usuarioAdministradorDAO = new UsuarioAdministradorDAO();
     private final UsuarioNormalDAO usuarioNormalDAO = new UsuarioNormalDAO();
     private ArrayList<UsuarioAdministrador> administradores;
-    private ArrayList<UsuarioNormal> normales;
+    private ArrayList<UsuarioNormal> normales = new ArrayList<>();
     private HashSet<Usuario> usuariosTotales = new HashSet<>();
 
     public GestorArchivoUsuario(){
@@ -310,15 +310,15 @@ public class GestorArchivoUsuario {
     }
 
     private void guardarCambios(){
-        usuarioAdministradorDAO.listToFile(administradores, NAME_FILE_ADMINS);
-        usuarioNormalDAO.listToFile(normales, NAME_FILE_USERS);
+        if(administradores != null && !administradores.isEmpty()) usuarioAdministradorDAO.listToFile(administradores, NAME_FILE_ADMINS);
+        if(normales != null && !normales.isEmpty()) usuarioNormalDAO.listToFile(normales, NAME_FILE_USERS);
     }
 
     private void actualizarListas(){
         this.usuariosTotales.clear();
 
-        this.usuariosTotales.addAll(administradores);
-        this.usuariosTotales.addAll(normales);
+        if(administradores != null && !administradores.isEmpty()) this.usuariosTotales.addAll(administradores);
+        if(normales != null && !normales.isEmpty()) this.usuariosTotales.addAll(normales);
     }
 
     private void actualizarListaAdmins(){
