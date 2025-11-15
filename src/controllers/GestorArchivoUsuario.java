@@ -56,7 +56,7 @@ public class GestorArchivoUsuario {
     }
 
     public boolean crearUsuarioAdmin(String nombre, String contrasenia, boolean activo, RolUsuarios rolUsuarios, PermisosAdmin permisoAdmin){
-        if(rolUsuarios.equals(RolUsuarios.ADMIN)){
+        if(nombreUsuarioUnico(nombre) && rolUsuarios.equals(RolUsuarios.ADMIN)){
             ContraseniaHash contraseniaHash = GestorContrasenia.generarHashContrasenia(contrasenia);
             administradores.add(new UsuarioAdministrador(
                     generarIdUsuario(),
