@@ -58,6 +58,8 @@ public class DibujoMapper extends AbstractMapper<Dibujo> {
         JSONArray jsonArray = null;
 
         try {
+            jsonArray = new JSONArray();
+
             for(Dibujo dibujo : dibujos){
                 jsonArray.put(objectToJSONObject(dibujo));
             }
