@@ -1,0 +1,223 @@
+/* ========================================
+   MAIN MENU STYLES
+   ======================================== */
+
+/* Contenedor principal */
+.main-container {
+    -fx-background-color: #f5f7fa;
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+
+.header-container {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.header-top {
+    -fx-background-color: white;
+}
+
+.app-title {
+    -fx-text-fill: #2c3e50;
+    -fx-font-weight: bold;
+}
+
+.user-label {
+    -fx-text-fill: #2c3e50;
+    -fx-font-weight: bold;
+}
+
+.role-label {
+    -fx-text-fill: #7f8c8d;
+}
+
+.btn-logout {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+    -fx-padding: 8 15;
+}
+
+.btn-logout:hover {
+    -fx-background-color: #c0392b;
+}
+
+.btn-logout:pressed {
+    -fx-background-color: #a93226;
+}
+
+/* ========================================
+   BARRA DE BÚSQUEDA
+   ======================================== */
+
+.search-bar {
+    -fx-background-color: white;
+}
+
+.search-field {
+    -fx-background-color: #ecf0f1;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 8 12;
+}
+
+.search-field:focused {
+    -fx-border-color: #3498db;
+    -fx-border-width: 2;
+    -fx-background-color: white;
+}
+
+.btn-search {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+    -fx-padding: 8 15;
+}
+
+.btn-search:hover {
+    -fx-background-color: #2980b9;
+}
+
+.btn-search:pressed {
+    -fx-background-color: #21618c;
+}
+
+.btn-primary {
+    -fx-background-color: #27ae60;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+    -fx-padding: 8 15;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #229954;
+}
+
+.btn-primary:pressed {
+    -fx-background-color: #1e8449;
+}
+
+.btn-secondary {
+    -fx-background-color: #95a5a6;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+    -fx-padding: 8 15;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #7f8c8d;
+}
+
+.btn-secondary:pressed {
+    -fx-background-color: #5d6d7e;
+}
+
+/* ========================================
+   CONTENIDO
+   ======================================== */
+
+.content-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.content-scroll .viewport {
+    -fx-background-color: transparent;
+}
+
+.content-scroll .scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.content-scroll .scroll-bar .thumb {
+    -fx-background-color: #bdc3c7;
+    -fx-background-radius: 5;
+}
+
+.content-scroll .scroll-bar .thumb:hover {
+    -fx-background-color: #95a5a6;
+}
+
+.dibujos-container {
+    -fx-background-color: transparent;
+}
+
+/* Cards de dibujos */
+.dibujo-card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 10, 0, 0, 2);
+}
+
+.dibujo-card:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 15, 0, 0, 3);
+    -fx-cursor: hand;
+}
+
+/* Estado vacío */
+.empty-state {
+    -fx-background-color: transparent;
+}
+
+.empty-icon {
+    -fx-text-fill: #bdc3c7;
+}
+
+.empty-title {
+    -fx-text-fill: #2c3e50;
+}
+
+.empty-subtitle {
+    -fx-text-fill: #7f8c8d;
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+
+.footer {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1 0 0 0;
+}
+
+.status-label {
+    -fx-text-fill: #27ae60;
+    -fx-font-weight: bold;
+}
+
+.count-label {
+    -fx-text-fill: #7f8c8d;
+}
+
+/* ========================================
+   BOTONES GENERALES
+   ======================================== */
+
+.button {
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-opacity: 0.9;
+}
+
+.button:pressed {
+    -fx-opacity: 0.8;
+}

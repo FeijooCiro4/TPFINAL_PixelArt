@@ -37,12 +37,22 @@ public class CollectionsMapper {
             } else if (value instanceof Set) {
                 serializedValue = setToJSONArray((Set<?>) value);
             } else if (value != null && isCustomObject(value)) {
-                // Si el valor es una instancia de una clase personalizada (clases modelo),
-                // DEBE tener un metodo 'objectToJSONObject()' implementado.
-                try {
-                    serializedValue = value.getClass().getMethod("objectToJSONObject").invoke(value);
-                } catch (Exception e) {
-                    System.err.println("Error al serializar objeto personalizado: " + e.getMessage());
+                // ✅ CORREGIDO: Usar el mapper del registro en lugar de invocar método inexistente
+                Class<?> valueClass = value.getClass();
+                if (MAPPER_REGISTRY.containsKey(valueClass)) {
+                    try {
+                        @SuppressWarnings("unchecked")
+                        Class<? extends AbstractMapper<Object>> mapperClass =
+                                (Class<? extends AbstractMapper<Object>>) MAPPER_REGISTRY.get(valueClass);
+                        AbstractMapper<Object> mapper = mapperClass.getConstructor().newInstance();
+                        serializedValue = mapper.objectToJSONObject(value);
+                    } catch (Exception e) {
+                        System.err.println("Error al serializar objeto personalizado con mapper: " + e.getMessage());
+                        e.printStackTrace();
+                        return null;
+                    }
+                } else {
+                    System.err.println("No hay mapper registrado para: " + valueClass.getSimpleName());
                     return null;
                 }
             }
@@ -66,10 +76,21 @@ public class CollectionsMapper {
             } else if (item instanceof Set) {
                 serializedItem = setToJSONArray((Set<?>) item);
             } else if (item != null && isCustomObject(item)) {
-                try {
-                    serializedItem = item.getClass().getMethod("objectToJSONObject").invoke(item);
-                } catch (Exception e) {
-                    System.err.println("Error al serializar objeto personalizado: " + e.getMessage());
+                // ✅ CORREGIDO: Usar el mapper del registro
+                Class<?> itemClass = item.getClass();
+                if (MAPPER_REGISTRY.containsKey(itemClass)) {
+                    try {
+                        @SuppressWarnings("unchecked")
+                        Class<? extends AbstractMapper<Object>> mapperClass =
+                                (Class<? extends AbstractMapper<Object>>) MAPPER_REGISTRY.get(itemClass);
+                        AbstractMapper<Object> mapper = mapperClass.getConstructor().newInstance();
+                        serializedItem = mapper.objectToJSONObject(item);
+                    } catch (Exception e) {
+                        System.err.println("Error al serializar item con mapper: " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                } else {
+                    System.err.println("No hay mapper registrado para: " + itemClass.getSimpleName());
                 }
             }
 
@@ -141,31 +162,29 @@ public class CollectionsMapper {
             return (V) jsonValue;
         }
 
-        switch (jsonValue) {
-            case JSONObject jsonObject when Map.class.isAssignableFrom(valueClass) -> {
+        if (jsonValue instanceof JSONObject jsonObject) {
+            if (Map.class.isAssignableFrom(valueClass)) {
                 return (V) jsonObjectToMap(jsonObject, String.class, Object.class);
-            }
-            case JSONArray jsonArray when Set.class.isAssignableFrom(valueClass) -> {
-                return (V) jsonArrayToSet(jsonArray, Object.class);
-            }
-            case JSONObject jsonObject -> {
-                if (MAPPER_REGISTRY.containsKey(valueClass)) {
-                    try {
-                        Class<? extends AbstractMapper<V>> mapperClass =
-                                (Class<? extends AbstractMapper<V>>) MAPPER_REGISTRY.get(valueClass);
-                        AbstractMapper<V> mapper = mapperClass.getConstructor().newInstance();
-                        return mapper.jsonObjectToObject(jsonObject);
-                    } catch (Exception e) {
-                        throw new NullMapperValueException("Error al instanciar o deserializar con Mapper para " + valueClass.getSimpleName() + ": " + e.getMessage());
-                    }
+            } else if (MAPPER_REGISTRY.containsKey(valueClass)) {
+                try {
+                    Class<? extends AbstractMapper<V>> mapperClass =
+                            (Class<? extends AbstractMapper<V>>) MAPPER_REGISTRY.get(valueClass);
+                    AbstractMapper<V> mapper = mapperClass.getConstructor().newInstance();
+                    return mapper.jsonObjectToObject(jsonObject);
+                } catch (Exception e) {
+                    throw new NullMapperValueException("Error al instanciar o deserializar con Mapper para " + valueClass.getSimpleName() + ": " + e.getMessage());
                 }
+            } else {
+                throw new NullMapperValueException("No hay mapper registrado para la clase: " + valueClass.getSimpleName());
             }
-            default -> {
-                throw new NullMapperValueException("Clase del valor json inidntificable");
+        } else if (jsonValue instanceof JSONArray jsonArray) {
+            if (Set.class.isAssignableFrom(valueClass)) {
+                return (V) jsonArrayToSet(jsonArray, Object.class);
+            } else {
+                throw new NullMapperValueException("No se puede convertir JSONArray a: " + valueClass.getSimpleName());
             }
+        } else {
+            throw new NullMapperValueException("Clase del valor json inidentificable: " + jsonValue.getClass().getSimpleName());
         }
-
-
-        return (V) jsonValue;
     }
 }

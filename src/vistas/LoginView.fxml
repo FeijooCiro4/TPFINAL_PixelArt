@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="vistas.controllers.LoginViewController"
+      alignment="CENTER"
+      spacing="20"
+      styleClass="root">
+
+    <padding>
+        <Insets top="40" right="40" bottom="40" left="40"/>
+    </padding>
+
+    <!-- Logo o Título -->
+    <Label text="PIXEL ART" styleClass="title">
+        <font>
+            <Font name="System Bold" size="32"/>
+        </font>
+    </Label>
+
+    <Label text="Iniciar Sesión" styleClass="subtitle">
+        <font>
+            <Font size="18"/>
+        </font>
+    </Label>
+
+    <!-- Formulario de Login -->
+    <VBox spacing="15" alignment="CENTER" maxWidth="400">
+
+        <!-- Campo Usuario -->
+        <VBox spacing="5">
+            <Label text="Usuario:">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </Label>
+            <TextField fx:id="txtUsuario"
+                       promptText="Ingrese su usuario"
+                       styleClass="text-field"/>
+        </VBox>
+
+        <!-- Campo Contraseña -->
+        <VBox spacing="5">
+            <Label text="Contraseña:">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </Label>
+            <PasswordField fx:id="txtContrasenia"
+                           promptText="Ingrese su contraseña"
+                           styleClass="text-field"/>
+        </VBox>
+
+        <!-- Selector de Rol (Opcional - comentado por defecto) -->
+        <!--
+        <VBox spacing="5">
+            <Label text="Tipo de Usuario:">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </Label>
+            <ComboBox fx:id="cmbRol"
+                     styleClass="combo-box"
+                     prefWidth="400">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Normal"/>
+                        <String fx:value="Administrador"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+        </VBox>
+        -->
+
+        <!-- Mensaje de error -->
+        <Label fx:id="lblError"
+               styleClass="error-label"
+               visible="false"
+               wrapText="true"
+               maxWidth="400">
+            <font>
+                <Font size="12"/>
+            </font>
+        </Label>
+
+        <!-- Botones -->
+        <HBox spacing="15" alignment="CENTER">
+            <Button fx:id="btnIniciarSesion"
+                    text="Iniciar Sesión"
+                    onAction="#handleIniciarSesion"
+                    styleClass="primary-button"
+                    prefWidth="150">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </Button>
+        </HBox>
+
+        <!-- Link a Registro -->
+        <HBox spacing="5" alignment="CENTER">
+            <Label text="¿No tienes cuenta?">
+                <font>
+                    <Font size="12"/>
+                </font>
+            </Label>
+            <Hyperlink fx:id="linkRegistro"
+                       text="Registrarse"
+                       onAction="#handleRegistro"
+                       styleClass="hyperlink">
+                <font>
+                    <Font size="12"/>
+                </font>
+            </Hyperlink>
+        </HBox>
+
+    </VBox>
+
+</VBox>

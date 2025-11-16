@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="vistas.controllers.MainMenuController"
+            styleClass="main-container">
+
+    <!-- HEADER -->
+    <top>
+        <VBox styleClass="header-container">
+            <HBox alignment="CENTER_LEFT" spacing="20" styleClass="header-top">
+                <padding>
+                    <Insets top="20" right="30" bottom="10" left="30"/>
+                </padding>
+
+                <Label text="🎨 Sistema de Dibujo Pixel Art" styleClass="app-title">
+                    <font>
+                        <Font name="System Bold" size="24"/>
+                    </font>
+                </Label>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- Info del usuario -->
+                <VBox alignment="CENTER_RIGHT" spacing="5">
+                    <Label fx:id="lblUsuario" text="Usuario: " styleClass="user-label">
+                        <font>
+                            <Font size="14"/>
+                        </font>
+                    </Label>
+                    <Label fx:id="lblRol" text="Rol: " styleClass="role-label">
+                        <font>
+                            <Font size="12"/>
+                        </font>
+                    </Label>
+                </VBox>
+
+                <Button fx:id="btnCerrarSesion"
+                        text="Cerrar Sesión"
+                        onAction="#handleCerrarSesion"
+                        styleClass="btn-logout">
+                    <font>
+                        <Font size="12"/>
+                    </font>
+                </Button>
+            </HBox>
+
+            <!-- Barra de búsqueda y filtros -->
+            <HBox alignment="CENTER_LEFT" spacing="15" styleClass="search-bar">
+                <padding>
+                    <Insets top="10" right="30" bottom="20" left="30"/>
+                </padding>
+
+                <Label text="Buscar:">
+                    <font>
+                        <Font size="14"/>
+                    </font>
+                </Label>
+
+                <TextField fx:id="txtBuscar"
+                           promptText="Buscar dibujo por nombre..."
+                           prefWidth="300"
+                           styleClass="search-field">
+                    <font>
+                        <Font size="13"/>
+                    </font>
+                </TextField>
+
+                <Button fx:id="btnBuscar"
+                        text="🔍 Buscar"
+                        onAction="#handleBuscar"
+                        styleClass="btn-search">
+                    <font>
+                        <Font size="12"/>
+                    </font>
+                </Button>
+
+                <Button fx:id="btnMostrarTodos"
+                        text="Mostrar Todos"
+                        onAction="#handleMostrarTodos"
+                        styleClass="btn-secondary">
+                    <font>
+                        <Font size="12"/>
+                    </font>
+                </Button>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- Botones de admin (solo visible para admins) -->
+                <Button fx:id="btnCrearDibujo"
+                        text="➕ Crear Dibujo"
+                        onAction="#handleCrearDibujo"
+                        styleClass="btn-primary"
+                        visible="false"
+                        managed="false">
+                    <font>
+                        <Font size="12"/>
+                    </font>
+                </Button>
+
+                <Button fx:id="btnGestionarUsuarios"
+                        text="👥 Gestionar Usuarios"
+                        onAction="#handleGestionarUsuarios"
+                        styleClass="btn-primary"
+                        visible="false"
+                        managed="false">
+                    <font>
+                        <Font size="12"/>
+                    </font>
+                </Button>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <center>
+        <StackPane>
+            <!-- ScrollPane con la lista de dibujos -->
+            <ScrollPane fx:id="scrollPane"
+                        fitToWidth="true"
+                        styleClass="content-scroll">
+                <VBox fx:id="vboxDibujos"
+                      spacing="15"
+                      styleClass="dibujos-container">
+                    <padding>
+                        <Insets top="20" right="30" bottom="20" left="30"/>
+                    </padding>
+                </VBox>
+            </ScrollPane>
+
+            <!-- Mensaje cuando no hay dibujos -->
+            <VBox fx:id="vboxSinDibujos"
+                  alignment="CENTER"
+                  spacing="20"
+                  visible="false"
+                  styleClass="empty-state">
+                <Label text="📭" styleClass="empty-icon">
+                    <font>
+                        <Font size="72"/>
+                    </font>
+                </Label>
+                <Label text="No hay dibujos disponibles" styleClass="empty-title">
+                    <font>
+                        <Font name="System Bold" size="18"/>
+                    </font>
+                </Label>
+                <Label text="Los administradores aún no han creado dibujos para colorear"
+                       styleClass="empty-subtitle">
+                    <font>
+                        <Font size="14"/>
+                    </font>
+                </Label>
+            </VBox>
+        </StackPane>
+    </center>
+
+    <!-- FOOTER -->
+    <bottom>
+        <HBox alignment="CENTER" styleClass="footer">
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
+
+            <Label fx:id="lblEstado"
+                   text="Listo"
+                   styleClass="status-label">
+                <font>
+                    <Font size="12"/>
+                </font>
+            </Label>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Label fx:id="lblCantidadDibujos"
+                   text="0 dibujos disponibles"
+                   styleClass="count-label">
+                <font>
+                    <Font size="12"/>
+                </font>
+            </Label>
+        </HBox>
+    </bottom>
+
+</BorderPane>

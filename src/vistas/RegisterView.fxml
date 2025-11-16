@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="vistas.controllers.RegisterViewController"
+      alignment="CENTER"
+      spacing="20"
+      styleClass="root">
+
+    <padding>
+        <Insets top="30" right="40" bottom="30" left="40"/>
+    </padding>
+
+    <!-- Título -->
+    <Label text="Crear Cuenta" styleClass="title">
+        <font>
+            <Font name="System Bold" size="28"/>
+        </font>
+    </Label>
+
+    <Label text="Complete los siguientes datos" styleClass="subtitle">
+        <font>
+            <Font size="14"/>
+        </font>
+    </Label>
+
+    <!-- Formulario de Registro -->
+    <VBox spacing="15" alignment="CENTER" maxWidth="450">
+
+        <!-- Campo Usuario -->
+        <VBox spacing="5">
+            <Label text="Nombre de Usuario:">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </Label>
+            <TextField fx:id="txtUsuario"
+                       promptText="Ingrese su nombre de usuario"
+                       styleClass="text-field"/>
+            <Label fx:id="lblUsuarioInfo"
+                   text="El nombre de usuario debe ser único"
+                   styleClass="info-label">
+                <font>
+                    <Font size="11"/>
+                </font>
+            </Label>
+        </VBox>
+
+        <!-- Campo Contraseña -->
+        <VBox spacing="5">
+            <Label text="Contraseña:">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </Label>
+            <PasswordField fx:id="txtContrasenia"
+                           promptText="Ingrese su contraseña"
+                           styleClass="text-field"/>
+            <Label fx:id="lblContraseniaInfo"
+                   text="Mínimo 9 caracteres, 3 números y 1 mayúscula"
+                   styleClass="info-label">
+                <font>
+                    <Font size="11"/>
+                </font>
+            </Label>
+        </VBox>
+
+        <!-- Campo Confirmar Contraseña -->
+        <VBox spacing="5">
+            <Label text="Confirmar Contraseña:">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </Label>
+            <PasswordField fx:id="txtConfirmarContrasenia"
+                           promptText="Confirme su contraseña"
+                           styleClass="text-field"/>
+        </VBox>
+
+        <!-- Selector de Tipo de Usuario -->
+        <VBox spacing="5">
+            <Label text="Tipo de Usuario:">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </Label>
+            <ComboBox fx:id="cmbTipoUsuario"
+                      styleClass="combo-box"
+                      prefWidth="450"
+                      promptText="Seleccione el tipo de usuario">
+            </ComboBox>
+            <Label fx:id="lblTipoInfo"
+                   text="Usuario Normal: Puede crear y pintar dibujos"
+                   styleClass="info-label">
+                <font>
+                    <Font size="11"/>
+                </font>
+            </Label>
+        </VBox>
+
+        <!-- Mensaje de error/éxito -->
+        <Label fx:id="lblMensaje"
+               visible="false"
+               wrapText="true"
+               maxWidth="450">
+            <font>
+                <Font size="12"/>
+            </font>
+        </Label>
+
+        <!-- Botones -->
+        <HBox spacing="15" alignment="CENTER">
+            <Button fx:id="btnRegistrar"
+                    text="Registrarse"
+                    onAction="#handleRegistrar"
+                    styleClass="primary-button"
+                    prefWidth="150">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </Button>
+
+            <Button fx:id="btnCancelar"
+                    text="Cancelar"
+                    onAction="#handleCancelar"
+                    styleClass="secondary-button"
+                    prefWidth="150">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </Button>
+        </HBox>
+
+        <!-- Link a Login -->
+        <HBox spacing="5" alignment="CENTER">
+            <Label text="¿Ya tienes cuenta?">
+                <font>
+                    <Font size="12"/>
+                </font>
+            </Label>
+            <Hyperlink fx:id="linkLogin"
+                       text="Iniciar Sesión"
+                       onAction="#handleVolverLogin"
+                       styleClass="hyperlink">
+                <font>
+                    <Font size="12"/>
+                </font>
+            </Hyperlink>
+        </HBox>
+
+    </VBox>
+
+</VBox>

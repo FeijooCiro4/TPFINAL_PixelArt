@@ -1,0 +1,324 @@
+/* ========================================
+   CREATE DIBUJO STYLES
+   ======================================== */
+
+.create-container {
+    -fx-background-color: #f5f7fa;
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+
+.header {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.header-content {
+    -fx-background-color: white;
+}
+
+.page-title {
+    -fx-text-fill: #2c3e50;
+}
+
+/* ========================================
+   PANELS
+   ======================================== */
+
+.left-panel, .right-panel {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 2);
+}
+
+.center-panel {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 2);
+}
+
+.section-title {
+    -fx-text-fill: #2c3e50;
+}
+
+/* ========================================
+   CONFIGURACIÓN (LEFT PANEL)
+   ======================================== */
+
+.field-label {
+    -fx-text-fill: #2c3e50;
+    -fx-font-weight: bold;
+}
+
+.config-field {
+    -fx-background-color: #ecf0f1;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 8 12;
+}
+
+.config-field:focused {
+    -fx-border-color: #3498db;
+    -fx-border-width: 2;
+    -fx-background-color: white;
+}
+
+.info-label {
+    -fx-text-fill: #7f8c8d;
+}
+
+/* Herramientas */
+.tool-button {
+    -fx-background-color: #ecf0f1;
+    -fx-text-fill: #2c3e50;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+    -fx-padding: 8 15;
+}
+
+.tool-button:selected {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+.tool-button:hover {
+    -fx-background-color: #d5dbdb;
+}
+
+.tool-button:selected:hover {
+    -fx-background-color: #2980b9;
+}
+
+.color-preview-box {
+    -fx-background-color: #ecf0f1;
+    -fx-background-radius: 5;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 5;
+    -fx-border-width: 1;
+}
+
+.color-preview {
+    -fx-border-color: #bdc3c7;
+    -fx-border-width: 2;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
+
+/* Paleta de colores */
+.color-palette {
+    -fx-background-color: #ecf0f1;
+    -fx-padding: 10;
+    -fx-background-radius: 5;
+}
+
+/* Estadísticas */
+.stats-box {
+    -fx-background-color: #e8f8f5;
+    -fx-background-radius: 5;
+    -fx-border-color: #27ae60;
+    -fx-border-radius: 5;
+    -fx-border-width: 1;
+}
+
+.stats-title {
+    -fx-text-fill: #27ae60;
+}
+
+/* Botones de acción */
+.btn-save {
+    -fx-background-color: #27ae60;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+    -fx-padding: 12 20;
+}
+
+.btn-save:hover {
+    -fx-background-color: #229954;
+}
+
+.btn-save:pressed {
+    -fx-background-color: #1e8449;
+}
+
+.btn-clear {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+    -fx-padding: 10 20;
+}
+
+.btn-clear:hover {
+    -fx-background-color: #c0392b;
+}
+
+.btn-clear:pressed {
+    -fx-background-color: #a93226;
+}
+
+/* ========================================
+   CANVAS (CENTER PANEL)
+   ======================================== */
+
+.canvas-scroll {
+    -fx-background-color: #ecf0f1;
+    -fx-background-radius: 5;
+}
+
+.canvas-scroll .viewport {
+    -fx-background-color: #ecf0f1;
+}
+
+.canvas-container {
+    -fx-background-color: #ecf0f1;
+    -fx-padding: 20;
+}
+
+.drawing-canvas {
+    -fx-background-color: #ecf0f1;
+}
+
+/* Instrucciones */
+.instructions {
+    -fx-background-color: #fff3cd;
+    -fx-background-radius: 5;
+    -fx-border-color: #ffc107;
+    -fx-border-radius: 5;
+    -fx-border-width: 1;
+}
+
+.icon-info {
+    -fx-text-fill: #ff9800;
+}
+
+.instruction-text {
+    -fx-text-fill: #856404;
+}
+
+/* ========================================
+   PREVIEW (RIGHT PANEL)
+   ======================================== */
+
+.preview-box {
+    -fx-background-color: #ecf0f1;
+    -fx-background-radius: 5;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 5;
+    -fx-border-width: 1;
+}
+
+.preview-canvas {
+    -fx-background-color: white;
+    -fx-padding: 5;
+}
+
+.preview-label {
+    -fx-text-fill: #7f8c8d;
+}
+
+/* Ayuda */
+.help-box {
+    -fx-background-color: #e3f2fd;
+    -fx-background-radius: 5;
+    -fx-border-color: #2196f3;
+    -fx-border-radius: 5;
+    -fx-border-width: 1;
+}
+
+.help-title {
+    -fx-text-fill: #1976d2;
+}
+
+.help-text {
+    -fx-text-fill: #424242;
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+
+.footer {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1 0 0 0;
+}
+
+.status-label {
+    -fx-text-fill: #27ae60;
+    -fx-font-weight: bold;
+}
+
+.action-label {
+    -fx-text-fill: #7f8c8d;
+    -fx-font-style: italic;
+}
+
+/* ========================================
+   BOTONES GENERALES
+   ======================================== */
+
+.btn-secondary {
+    -fx-background-color: #95a5a6;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+    -fx-padding: 8 15;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #7f8c8d;
+}
+
+.btn-secondary:pressed {
+    -fx-background-color: #5d6d7e;
+}
+
+.button {
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-opacity: 0.9;
+}
+
+.button:pressed {
+    -fx-opacity: 0.8;
+}
+
+/* ========================================
+   CHECKBOX
+   ======================================== */
+
+.check-box {
+    -fx-text-fill: #2c3e50;
+}
+
+.check-box .box {
+    -fx-background-color: white;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: #3498db;
+}
+
+.check-box:selected .box {
+    -fx-border-color: #3498db;
+}

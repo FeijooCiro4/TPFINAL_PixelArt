@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="vistas.controllers.CreateDibujoController"
+            prefWidth="1200" prefHeight="800"
+            style="-fx-background-color: #f5f7fa;">
+
+    <!-- HEADER -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0; -fx-padding: 20 30;">
+            <Label text="Crear Nuevo Dibujo" style="-fx-text-fill: #2c3e50; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="btnVolver" text="Volver" onAction="#handleVolver" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 8 15;"/>
+        </HBox>
+    </top>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <center>
+        <HBox spacing="20" style="-fx-padding: 20;">
+
+            <!-- PANEL IZQUIERDO: Configuración -->
+            <VBox spacing="15" prefWidth="280" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #e0e0e0; -fx-border-radius: 10; -fx-border-width: 1; -fx-padding: 20;">
+
+                <Label text="Configuración" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                <Separator/>
+
+                <!-- Nombre del dibujo -->
+                <VBox spacing="5">
+                    <Label text="Nombre del Dibujo:" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;"/>
+                    <TextField fx:id="txtNombreDibujo" promptText="Ej: Casa Simple" style="-fx-background-color: #ecf0f1; -fx-border-color: #bdc3c7; -fx-border-radius: 5; -fx-background-radius: 5;"/>
+                </VBox>
+
+                <!-- Tamaño -->
+                <VBox spacing="5">
+                    <Label text="Tamaño del Canvas:" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;"/>
+                    <ComboBox fx:id="cmbTamanio" promptText="Seleccionar tamaño" onAction="#handleCambiarTamanio" maxWidth="Infinity"/>
+                    <Label fx:id="lblInfoTamanio" text="Píxeles totales: 0" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
+                </VBox>
+
+                <Separator/>
+
+                <!-- Herramientas -->
+                <VBox spacing="8">
+                    <Label text="Herramientas:" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                    <HBox spacing="10">
+                        <ToggleButton fx:id="btnHerramientaPintar" text="Pintar" selected="true"/>
+                        <ToggleButton fx:id="btnHerramientaBorrar" text="Borrar"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Color actual -->
+                <VBox spacing="5">
+                    <Label text="Color seleccionado:" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #ecf0f1; -fx-padding: 10; -fx-background-radius: 5;">
+                        <Region fx:id="regionColorActual" prefWidth="40" prefHeight="40" style="-fx-border-color: #bdc3c7; -fx-border-width: 2; -fx-background-radius: 5;"/>
+                        <Label fx:id="lblColorActual" text="#000000" style="-fx-font-family: monospace;"/>
+                    </HBox>
+                </VBox>
+
+                <Separator/>
+
+                <!-- Paleta de colores -->
+                <VBox spacing="8">
+                    <Label text="Paleta de Colores:" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+
+                    <GridPane fx:id="gridPaletaColores" hgap="5" vgap="5" style="-fx-background-color: #ecf0f1; -fx-padding: 10; -fx-background-radius: 5;"/>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label fx:id="lblCantidadColores" text="10 colores disponibles" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnAgregarColor" text="+ Color" onAction="#handleAgregarColor" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 10px; -fx-padding: 5 10; -fx-background-radius: 3;"/>
+                    </HBox>
+
+                    <Label text="Clic izq: Seleccionar | Clic der: Cambiar | X: Eliminar" wrapText="true" style="-fx-font-size: 9px; -fx-text-fill: #95a5a6; -fx-font-style: italic;"/>
+                </VBox>
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <!-- Estadísticas -->
+                <VBox spacing="5" style="-fx-background-color: #e8f8f5; -fx-padding: 10; -fx-background-radius: 5; -fx-border-color: #27ae60; -fx-border-radius: 5; -fx-border-width: 1;">
+                    <Label text="Estadísticas:" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+                    <Label fx:id="lblPixelesMarcados" text="Píxeles marcados: 0" style="-fx-font-size: 11px;"/>
+                    <Label fx:id="lblPorcentajeLleno" text="Completado: 0%" style="-fx-font-size: 11px;"/>
+                </VBox>
+
+                <!-- Botones -->
+                <VBox spacing="10">
+                    <Button fx:id="btnGuardar" text="Guardar Dibujo" onAction="#handleGuardar" maxWidth="Infinity" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 12 20;"/>
+                    <Button fx:id="btnLimpiar" text="Limpiar Canvas" onAction="#handleLimpiar" maxWidth="Infinity" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 10 20;"/>
+                </VBox>
+            </VBox>
+
+            <!-- PANEL CENTRAL: Canvas -->
+            <VBox spacing="15" HBox.hgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #e0e0e0; -fx-border-radius: 10; -fx-border-width: 1; -fx-padding: 20;">
+
+                <HBox alignment="CENTER_LEFT" spacing="15">
+                    <Label text="Canvas de Diseño" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <CheckBox fx:id="chkMostrarGrid" text="Mostrar Grid" selected="true" onAction="#handleToggleGrid"/>
+                </HBox>
+
+                <ScrollPane fx:id="scrollCanvas" fitToWidth="false" fitToHeight="false" VBox.vgrow="ALWAYS" style="-fx-background-color: #ecf0f1;">
+                    <StackPane fx:id="stackCanvas" alignment="CENTER" style="-fx-background-color: #ecf0f1; -fx-padding: 20;">
+                        <GridPane fx:id="gridCanvas"/>
+                    </StackPane>
+                </ScrollPane>
+
+                <HBox spacing="10" alignment="CENTER" style="-fx-background-color: #fff3cd; -fx-padding: 10; -fx-background-radius: 5; -fx-border-color: #ffc107; -fx-border-radius: 5; -fx-border-width: 1;">
+                    <Label text="INFO:" style="-fx-font-weight: bold; -fx-text-fill: #856404;"/>
+                    <Label text="Clic izquierdo para pintar | Clic derecho para borrar | Selecciona un color de la paleta" wrapText="true" style="-fx-text-fill: #856404; -fx-font-size: 11px;"/>
+                </HBox>
+            </VBox>
+
+            <!-- PANEL DERECHO: Preview -->
+            <VBox spacing="15" prefWidth="240" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #e0e0e0; -fx-border-radius: 10; -fx-border-width: 1; -fx-padding: 20;">
+
+                <Label text="Vista Previa" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                <Separator/>
+
+                <VBox spacing="10" alignment="CENTER" style="-fx-background-color: #ecf0f1; -fx-padding: 15; -fx-background-radius: 5;">
+                    <GridPane fx:id="gridPreview" alignment="CENTER"/>
+                    <Label text="Así verán los usuarios el dibujo" textAlignment="CENTER" wrapText="true" style="-fx-font-size: 10px; -fx-text-fill: #7f8c8d;"/>
+                </VBox>
+
+                <Separator/>
+
+                <VBox spacing="10" style="-fx-background-color: #e3f2fd; -fx-padding: 15; -fx-background-radius: 5; -fx-border-color: #2196f3; -fx-border-radius: 5; -fx-border-width: 1;">
+                    <Label text="Ayuda" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #1976d2;"/>
+                    <Label text="1. Selecciona el tamaño del canvas" wrapText="true" style="-fx-font-size: 11px;"/>
+                    <Label text="2. Elige colores de la paleta" wrapText="true" style="-fx-font-size: 11px;"/>
+                    <Label text="3. Dibuja la plantilla en el canvas" wrapText="true" style="-fx-font-size: 11px;"/>
+                    <Label text="4. Los píxeles marcados serán coloreables por los usuarios" wrapText="true" style="-fx-font-size: 11px;"/>
+                </VBox>
+            </VBox>
+
+        </HBox>
+    </center>
+
+    <!-- FOOTER -->
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0; -fx-padding: 10 20;">
+            <Label fx:id="lblEstado" text="Listo para crear" style="-fx-text-fill: #27ae60; -fx-font-weight: bold; -fx-font-size: 12px;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblUltimaAccion" text="" style="-fx-text-fill: #7f8c8d; -fx-font-size: 11px;"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
