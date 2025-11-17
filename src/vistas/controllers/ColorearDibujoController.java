@@ -19,7 +19,6 @@ import java.util.*;
 
 public class ColorearDibujoController {
 
-    // FXML Elements
     @FXML private Label lblTitulo;
     @FXML private Label lblNombreDibujo;
     @FXML private Label lblTamanioDibujo;
@@ -27,83 +26,48 @@ public class ColorearDibujoController {
     @FXML private ToggleButton btnHerramientaBorrar;
     @FXML private Region regionColorActual;
     @FXML private Label lblColorActual;
-    @FXML private Label lblIndiceColor;
     @FXML private GridPane gridPaletaColores;
     @FXML private Label lblCantidadColores;
     @FXML private Label lblPixelesColoreados;
-    @FXML private ProgressBar progressBar;
-    @FXML private Label lblPorcentaje;
-    @FXML private Button btnGuardar;
     @FXML private Button btnLimpiar;
     @FXML private CheckBox chkMostrarGrid;
     @FXML private CheckBox chkMostrarPlantilla;
-    @FXML private ScrollPane scrollCanvas;
-    @FXML private StackPane stackCanvas;
     @FXML private GridPane gridCanvas;
-    @FXML private GridPane gridPreview;
-    @FXML private Label lblEstadoDibujo;
-    @FXML private Label lblMensajeEstado;
-    @FXML private Label lblEstado;
-    @FXML private Label lblUltimaAccion;
     @FXML private Button btnVolver;
 
-    // Variables de estado
-    private GestorArchivoDibujo gestorArchivoDibujo;
+    // Variables
     private GestorArchivoUsuario gestorArchivoUsuario;
     private Dibujo dibujoActual;
     private int idUsuario;
     private String colorActual;
-    private int indiceColorActual;
     private boolean modoPintar = true;
-    private Map<String, String> pixelesColoreados; // key: "x,y" -> value: color hex
-    private Map<String, Integer> pixelesNumero; // key: "x,y" -> value: índice del color
-    private Set<String> pixelesPintables; // Píxeles que el admin marcó como coloreables
-    private TreeMap<Integer, String> paletaDibujo; // La paleta del dibujo
+    private Map<String, String> pixelesColoreados;
+    private Map<String, Integer> pixelesNumero;
+    private Set<String> pixelesPintables;
+    private TreeMap<Integer, String> paletaDibujo;
+    private boolean yaGuardado = false;
 
     @FXML
     public void initialize() {
-        try {
-            gestorArchivoDibujo = new GestorArchivoDibujo();
-            gestorArchivoUsuario = new GestorArchivoUsuario();
-            pixelesColoreados = new HashMap<>();
-            pixelesNumero = new HashMap<>();
-            pixelesPintables = new HashSet<>();
-
-            configurarHerramientas();
-
-            System.out.println("✅ ColorearDibujoController inicializado");
-
-        } catch (Exception e) {
-            System.err.println("❌ Error al inicializar ColorearDibujoController:");
-            e.printStackTrace();
-            mostrarError("Error al inicializar: " + e.getMessage());
-        }
+        gestorArchivoUsuario = new GestorArchivoUsuario();
+        pixelesColoreados = new HashMap<>();
+        pixelesNumero = new HashMap<>();
+        pixelesPintables = new HashSet<>();
+        configurarHerramientas();
     }
 
-    /**
-     * Configura el dibujo y el usuario
-     */
     public void setDibujoYUsuario(Dibujo dibujo, int idUsuario) {
         this.dibujoActual = dibujo;
         this.idUsuario = idUsuario;
 
-        if (dibujo == null) {
-            mostrarError("Error: Dibujo no válido");
-            return;
-        }
+        lblNombreDibujo.setText(dibujo.getNombreDibujo());
+        lblTamanioDibujo.setText(dibujo.getAnchoCuadricula() + "x" + dibujo.getAnchoCuadricula());
+        lblTitulo.setText("Colorear: " + dibujo.getNombreDibujo());
 
-        System.out.println("🎨 Cargando dibujo para colorear:");
-        System.out.println("   - Dibujo: " + dibujo.getNombreDibujo());
-        System.out.println("   - ID Usuario: " + idUsuario);
-        System.out.println("   - Tamaño: " + dibujo.getAnchoCuadricula() + "x" + dibujo.getAnchoCuadricula());
-        System.out.println("   - Cuadrículas plantilla: " + dibujo.getCuadriculas().size());
-
-        cargarInformacionDibujo();
-        cargarPaletaDibujo();
+        cargarPaleta();
         cargarPixelesPintables();
-        cargarProgresoGuardado();
+        verificarCompletado();
         generarCanvas();
-        generarPreview();
         actualizarProgreso();
     }
 
@@ -111,425 +75,226 @@ public class ColorearDibujoController {
         ToggleGroup herramientas = new ToggleGroup();
         btnHerramientaPintar.setToggleGroup(herramientas);
         btnHerramientaBorrar.setToggleGroup(herramientas);
-
         btnHerramientaPintar.setSelected(true);
-        modoPintar = true;
 
-        btnHerramientaPintar.selectedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                modoPintar = true;
-                actualizarEstado("Modo: Pintar");
-            }
+        btnHerramientaPintar.selectedProperty().addListener((obs, old, val) -> {
+            if (val) modoPintar = true;
         });
 
-        btnHerramientaBorrar.selectedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                modoPintar = false;
-                actualizarEstado("Modo: Borrar");
-            }
+        btnHerramientaBorrar.selectedProperty().addListener((obs, old, val) -> {
+            if (val) modoPintar = false;
         });
     }
 
-    private void cargarInformacionDibujo() {
-        lblNombreDibujo.setText(dibujoActual.getNombreDibujo());
-        int tamanio = dibujoActual.getAnchoCuadricula();
-        lblTamanioDibujo.setText(tamanio + "x" + tamanio);
-        lblTitulo.setText("Colorear: " + dibujoActual.getNombreDibujo());
-    }
-
-    private void cargarPaletaDibujo() {
+    private void cargarPaleta() {
         paletaDibujo = new TreeMap<>(dibujoActual.getClavesColores());
-
-        System.out.println("🎨 Paleta del dibujo:");
-        for (Map.Entry<Integer, String> entry : paletaDibujo.entrySet()) {
-            System.out.println("   [" + entry.getKey() + "] → " + entry.getValue());
-        }
-
-        generarPaletaColores();
-
-        // Seleccionar el primer color
-        if (!paletaDibujo.isEmpty()) {
-            Map.Entry<Integer, String> firstEntry = paletaDibujo.firstEntry();
-            seleccionarColor(firstEntry.getKey(), firstEntry.getValue());
-        }
-    }
-
-    private void generarPaletaColores() {
         gridPaletaColores.getChildren().clear();
 
         int col = 0;
-        int row = 0;
-        int columnas = 4;
-
         for (Map.Entry<Integer, String> entry : paletaDibujo.entrySet()) {
-            int indice = entry.getKey();
-            String colorHex = entry.getValue();
+            VBox colorBox = new VBox(3);
+            colorBox.setAlignment(Pos.CENTER);
 
-            VBox colorBox = crearCeldaColor(indice, colorHex);
-            gridPaletaColores.add(colorBox, col, row);
+            Rectangle rect = new Rectangle(40, 40);
+            rect.setFill(Color.web(entry.getValue()));
+            rect.setStroke(Color.web("#999"));
+            rect.setStrokeWidth(2);
+            rect.setStyle("-fx-cursor: hand;");
+            rect.setOnMouseClicked(e -> seleccionarColor(entry.getValue()));
 
-            col++;
-            if (col >= columnas) {
-                col = 0;
-                row++;
-            }
+            Label lblNum = new Label(String.valueOf(entry.getKey()));
+            lblNum.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #666;");
+
+            colorBox.getChildren().addAll(rect, lblNum);
+            colorBox.setStyle("-fx-cursor: hand;");
+            colorBox.setOnMouseClicked(e -> seleccionarColor(entry.getValue()));
+
+            gridPaletaColores.add(colorBox, col++, 0);
         }
 
-        lblCantidadColores.setText(paletaDibujo.size() + " colores disponibles");
-    }
+        lblCantidadColores.setText(paletaDibujo.size() + " colores");
 
-    private VBox crearCeldaColor(int indice, String colorHex) {
-        VBox box = new VBox(3);
-        box.setAlignment(Pos.CENTER);
-        box.setStyle("-fx-cursor: hand; -fx-padding: 3;");
-
-        Rectangle rect = new Rectangle(50, 50);
-        rect.setFill(Color.web(colorHex));
-        rect.setStroke(Color.web("#bdc3c7"));
-        rect.setStrokeWidth(2);
-        rect.setStyle("-fx-cursor: hand;");
-
-        Label lblIndice = new Label("#" + indice);
-        lblIndice.setStyle("-fx-font-size: 10px; -fx-text-fill: #7f8c8d;");
-
-        box.getChildren().addAll(rect, lblIndice);
-
-        box.setOnMouseClicked(e -> seleccionarColor(indice, colorHex));
-
-        // Marcar si es el seleccionado
-        if (indiceColorActual == indice) {
-            rect.setStroke(Color.web("#3498db"));
-            rect.setStrokeWidth(4);
+        if (!paletaDibujo.isEmpty()) {
+            seleccionarColor(paletaDibujo.firstEntry().getValue());
         }
-
-        return box;
     }
 
-    private void seleccionarColor(int indice, String colorHex) {
-        this.indiceColorActual = indice;
+    private void seleccionarColor(String colorHex) {
         this.colorActual = colorHex;
-
-        regionColorActual.setStyle("-fx-background-color: " + colorHex + "; " +
-                "-fx-border-color: #bdc3c7; -fx-border-width: 2; " +
-                "-fx-background-radius: 5; -fx-border-radius: 5;");
-
+        regionColorActual.setStyle("-fx-background-color: " + colorHex + "; -fx-border-color: #999; -fx-border-width: 2;");
         lblColorActual.setText(colorHex);
-        lblIndiceColor.setText("#" + indice);
-
-        // Regenerar paleta para actualizar selección
-        generarPaletaColores();
-
-        actualizarEstado("Color seleccionado: #" + indice);
     }
 
     private void cargarPixelesPintables() {
-        pixelesPintables.clear();
-        pixelesNumero.clear();
-
         for (Cuadricula cuadricula : dibujoActual.getCuadriculas()) {
-            int x = cuadricula.getIndiceX();
-            int y = cuadricula.getIndiceY();
-            String colorPlantilla = cuadricula.getColor();
-            String key = x + "," + y;
-
+            String key = cuadricula.getIndiceX() + "," + cuadricula.getIndiceY();
             pixelesPintables.add(key);
 
-            // Encontrar el índice del color en la paleta
             for (Map.Entry<Integer, String> entry : paletaDibujo.entrySet()) {
-                if (entry.getValue().equalsIgnoreCase(colorPlantilla)) {
+                if (entry.getValue().equalsIgnoreCase(cuadricula.getColor())) {
                     pixelesNumero.put(key, entry.getKey());
                     break;
                 }
             }
         }
-
-        System.out.println("📍 Píxeles pintables: " + pixelesPintables.size());
     }
 
-    private void cargarProgresoGuardado() {
-        // TODO: Implementar carga del progreso guardado
-        // Por ahora empezamos con canvas vacío
-        System.out.println("💾 Cargando progreso guardado (no implementado aún)");
+    private void verificarCompletado() {
+        try {
+            models.UsuarioNormal usuario = gestorArchivoUsuario.buscarUsuarioNormal(idUsuario);
+            if (usuario != null) {
+                yaGuardado = usuario.buscarDibujoPintado(dibujoActual.getIdDibujo());
+            }
+        } catch (Exception e) {
+            yaGuardado = false;
+        }
     }
 
     private void generarCanvas() {
         gridCanvas.getChildren().clear();
         int tamanio = dibujoActual.getAnchoCuadricula();
-        double pixelSize = calcularTamanioPixel(tamanio);
+        double pixelSize = Math.min(500.0 / tamanio, 25);
 
-        gridCanvas.setHgap(0);
-        gridCanvas.setVgap(0);
-        gridCanvas.setAlignment(Pos.CENTER);
-
-        // Aplicar estilos al grid
         if (chkMostrarGrid.isSelected()) {
             gridCanvas.setHgap(1);
             gridCanvas.setVgap(1);
-            gridCanvas.setStyle("-fx-background-color: #bdc3c7;");
+            gridCanvas.setStyle("-fx-background-color: #ccc;");
         } else {
+            gridCanvas.setHgap(0);
+            gridCanvas.setVgap(0);
             gridCanvas.setStyle("-fx-background-color: white;");
         }
+
+        gridCanvas.setAlignment(Pos.CENTER);
 
         for (int y = 0; y < tamanio; y++) {
             for (int x = 0; x < tamanio; x++) {
                 String key = x + "," + y;
-                StackPane celda = crearCeldaCanvas(x, y, pixelSize, key);
+                StackPane celda = crearCelda(x, y, pixelSize, key);
                 gridCanvas.add(celda, x, y);
             }
         }
     }
 
-    private StackPane crearCeldaCanvas(int x, int y, double size, String key) {
+    private StackPane crearCelda(int x, int y, double size, String key) {
         StackPane celda = new StackPane();
         celda.setMinSize(size, size);
         celda.setMaxSize(size, size);
 
         Rectangle fondo = new Rectangle(size, size);
 
-        // Determinar el color de fondo
         if (pixelesColoreados.containsKey(key)) {
-            // Mostrar el color pintado por el usuario
-            String colorPintado = pixelesColoreados.get(key);
-            fondo.setFill(Color.web(colorPintado));
+            fondo.setFill(Color.web(pixelesColoreados.get(key)));
         } else {
-            // Fondo blanco si no está coloreado
             fondo.setFill(Color.WHITE);
         }
 
-        // SIN bordes de validación verde/rojo
-        fondo.setStroke(Color.TRANSPARENT);
-        fondo.setStrokeWidth(0);
-
         celda.getChildren().add(fondo);
 
-        // Si es pintable, mostrar el número (solo si mostrar plantilla está activo)
         if (pixelesPintables.contains(key)) {
             if (chkMostrarPlantilla.isSelected() && !pixelesColoreados.containsKey(key)) {
-                Integer numeroColor = pixelesNumero.get(key);
-                if (numeroColor != null) {
-                    Label lblNumero = new Label(String.valueOf(numeroColor));
-                    lblNumero.setStyle("-fx-font-size: " + (size * 0.4) + "px; " +
-                            "-fx-text-fill: #95a5a6; -fx-font-weight: bold;");
-                    celda.getChildren().add(lblNumero);
+                Integer num = pixelesNumero.get(key);
+                if (num != null) {
+                    Label lbl = new Label(String.valueOf(num));
+                    lbl.setStyle("-fx-font-size: " + (size * 0.4) + "px; -fx-text-fill: #999;");
+                    celda.getChildren().add(lbl);
                 }
             }
 
-            // Hacer clickeable
             celda.setStyle("-fx-cursor: hand;");
-            celda.setOnMouseClicked(this::handleClickPixel);
-            celda.setOnMouseDragEntered(this::handleClickPixel);
+            celda.setOnMouseClicked(this::handleClick);
+            celda.setOnMouseDragEntered(this::handleClick);
         }
 
         return celda;
     }
 
-    private void handleClickPixel(MouseEvent e) {
+    private void handleClick(MouseEvent e) {
         StackPane celda = (StackPane) e.getSource();
-        Integer colIndex = GridPane.getColumnIndex(celda);
-        Integer rowIndex = GridPane.getRowIndex(celda);
+        Integer x = GridPane.getColumnIndex(celda);
+        Integer y = GridPane.getRowIndex(celda);
 
-        if (colIndex == null || rowIndex == null) return;
+        if (x == null || y == null) return;
 
-        int x = colIndex;
-        int y = rowIndex;
         String key = x + "," + y;
-
-        if (!pixelesPintables.contains(key)) {
-            return; // No es pintable
-        }
+        if (!pixelesPintables.contains(key)) return;
 
         if (e.getButton() == MouseButton.PRIMARY || e.isPrimaryButtonDown()) {
             if (modoPintar) {
-                // Pintar con el color actual
                 pixelesColoreados.put(key, colorActual);
             } else {
-                // Borrar
                 pixelesColoreados.remove(key);
             }
         } else if (e.getButton() == MouseButton.SECONDARY) {
-            // Borrar
             pixelesColoreados.remove(key);
         }
 
-        // Regenerar canvas
         generarCanvas();
         actualizarProgreso();
-        actualizarPreview();
-    }
-
-    private double calcularTamanioPixel(int tamanio) {
-        double maxSize = 600.0;
-        return Math.min(maxSize / tamanio, 30);
-    }
-
-    private void generarPreview() {
-        gridPreview.getChildren().clear();
-        gridPreview.setHgap(1);
-        gridPreview.setVgap(1);
-        gridPreview.setAlignment(Pos.CENTER);
-
-        int tamanio = dibujoActual.getAnchoCuadricula();
-        double previewSize = Math.min(200.0 / tamanio, 10);
-
-        for (int y = 0; y < tamanio; y++) {
-            for (int x = 0; x < tamanio; x++) {
-                Rectangle pixel = new Rectangle(previewSize, previewSize);
-                String key = x + "," + y;
-
-                if (pixelesColoreados.containsKey(key)) {
-                    String color = pixelesColoreados.get(key);
-                    pixel.setFill(Color.web(color));
-                } else {
-                    pixel.setFill(Color.WHITE);
-                }
-
-                pixel.setStroke(Color.web("#dcdde1"));
-                pixel.setStrokeWidth(0.3);
-
-                gridPreview.add(pixel, x, y);
-            }
-        }
-    }
-
-    private void actualizarPreview() {
-        for (var node : gridPreview.getChildren()) {
-            if (node instanceof Rectangle) {
-                Integer colIndex = GridPane.getColumnIndex(node);
-                Integer rowIndex = GridPane.getRowIndex(node);
-
-                if (colIndex != null && rowIndex != null) {
-                    String key = colIndex + "," + rowIndex;
-                    Rectangle pixel = (Rectangle) node;
-
-                    if (pixelesColoreados.containsKey(key)) {
-                        String color = pixelesColoreados.get(key);
-                        pixel.setFill(Color.web(color));
-                    } else {
-                        pixel.setFill(Color.WHITE);
-                    }
-                }
-            }
-        }
     }
 
     private void actualizarProgreso() {
         int total = pixelesPintables.size();
         int coloreados = pixelesColoreados.size();
 
-        double porcentajeColoreados = total > 0 ? (coloreados * 100.0) / total : 0;
+        lblPixelesColoreados.setText(coloreados + " / " + total);
 
-        lblPixelesColoreados.setText(coloreados + " / " + total + " píxeles coloreados");
-        progressBar.setProgress(porcentajeColoreados / 100.0);
-        lblPorcentaje.setText(String.format("%.1f%% completado", porcentajeColoreados));
+        if (coloreados == total && total > 0 && !yaGuardado) {
+            autoGuardar();
+        }
+    }
 
-        // Actualizar estado basado solo en cantidad coloreada
-        if (coloreados == total && total > 0) {
-            lblEstadoDibujo.setText("¡COMPLETADO!");
-            lblMensajeEstado.setText("¡Has coloreado todos los píxeles!");
-            lblEstadoDibujo.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;");
-            lblMensajeEstado.setStyle("-fx-font-size: 10px; -fx-text-fill: #2e7d32;");
-        } else {
-            int faltantes = total - coloreados;
-            lblEstadoDibujo.setText("En progreso");
-            lblMensajeEstado.setText("Faltan " + faltantes + " píxeles por colorear");
-            lblEstadoDibujo.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #e65100;");
-            lblMensajeEstado.setStyle("-fx-font-size: 10px; -fx-text-fill: #e65100;");
+    private void autoGuardar() {
+        try {
+            gestorArchivoUsuario.agregarDibujoPintado(idUsuario, dibujoActual.getIdDibujo());
+            yaGuardado = true;
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("¡Completado!");
+            alert.setHeaderText("🎉 ¡Dibujo Completado!");
+            alert.setContentText("Has terminado de colorear:\n\"" + dibujoActual.getNombreDibujo() + "\"\n\nGuardado automáticamente.");
+            alert.showAndWait();
+        } catch (Exception e) {
+            System.err.println("Error al guardar: " + e.getMessage());
         }
     }
 
     @FXML
     private void handleToggleGrid(ActionEvent event) {
         generarCanvas();
-        actualizarEstado(chkMostrarGrid.isSelected() ? "Grid visible" : "Grid oculto");
     }
 
     @FXML
     private void handleTogglePlantilla(ActionEvent event) {
         generarCanvas();
-        actualizarEstado(chkMostrarPlantilla.isSelected() ? "Plantilla visible" : "Plantilla oculta");
-    }
-
-    @FXML
-    private void handleGuardar(ActionEvent event) {
-        try {
-            System.out.println("💾 Guardando progreso...");
-            System.out.println("   - Píxeles coloreados: " + pixelesColoreados.size());
-
-            // TODO: Implementar guardado del progreso
-            // Deberías guardar pixelesColoreados en algún lugar asociado al usuario
-            // Por ejemplo, en un archivo JSON específico por usuario y dibujo
-
-            actualizarEstado("Progreso guardado");
-            lblUltimaAccion.setText("Guardado: " + new java.util.Date());
-
-            mostrarInfo("Guardado", "Tu progreso ha sido guardado correctamente");
-
-        } catch (Exception e) {
-            System.err.println("❌ Error al guardar:");
-            e.printStackTrace();
-            mostrarError("Error al guardar: " + e.getMessage());
-        }
     }
 
     @FXML
     private void handleLimpiar(ActionEvent event) {
-        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmacion.setTitle("Limpiar Todo");
-        confirmacion.setHeaderText("¿Estás seguro?");
-        confirmacion.setContentText("Se borrarán todos los píxeles coloreados");
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Limpiar");
+        confirm.setContentText("¿Borrar todos los píxeles?");
 
-        if (confirmacion.showAndWait().get() == ButtonType.OK) {
+        if (confirm.showAndWait().get() == ButtonType.OK) {
             pixelesColoreados.clear();
             generarCanvas();
-            actualizarPreview();
             actualizarProgreso();
-            actualizarEstado("Canvas limpiado");
-            System.out.println("🗑 Canvas limpiado");
         }
     }
 
     @FXML
     private void handleVolver(ActionEvent event) {
-        if (!pixelesColoreados.isEmpty()) {
-            Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-            confirmacion.setTitle("Volver");
-            confirmacion.setHeaderText("¿Deseas salir?");
-            confirmacion.setContentText("Asegúrate de haber guardado tu progreso");
+        if (!pixelesColoreados.isEmpty() && !yaGuardado) {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Volver");
+            confirm.setContentText("No has completado el dibujo.\nPerderás tu progreso.\n¿Salir?");
 
-            if (confirmacion.showAndWait().get() != ButtonType.OK) {
+            if (confirm.showAndWait().get() != ButtonType.OK) {
                 return;
             }
         }
 
         Stage stage = (Stage) btnVolver.getScene().getWindow();
         stage.close();
-    }
-
-    private void actualizarEstado(String mensaje) {
-        lblEstado.setText(mensaje);
-    }
-
-    private void mostrarError(String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
-    }
-
-    private void mostrarAdvertencia(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
-    }
-
-    private void mostrarInfo(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
     }
 }

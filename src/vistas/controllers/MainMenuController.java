@@ -1,6 +1,7 @@
 package vistas.controllers;
 
 import controllers.GestorArchivoDibujo;
+import controllers.GestorArchivoUsuario;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +16,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import models.Cuadricula;
 import models.Dibujo;
+import models.UsuarioNormal;
 import models.enumerators.RolUsuarios;
 
 import vistas.controllers.CreateDibujoController;
@@ -42,13 +44,16 @@ public class MainMenuController {
 
     private String nombreUsuario;
     private RolUsuarios rolUsuario;
+    private int idUsuario;
     private GestorArchivoDibujo gestorArchivoDibujo;
+    private GestorArchivoUsuario gestorArchivoUsuario;
     private ArrayList<Dibujo> dibujosActuales;
 
     @FXML
     public void initialize() {
         try {
             gestorArchivoDibujo = new GestorArchivoDibujo();
+            gestorArchivoUsuario = new GestorArchivoUsuario();
             dibujosActuales = new ArrayList<>();
 
             System.out.println("✅ MainMenuController inicializado");
@@ -60,9 +65,6 @@ public class MainMenuController {
         }
     }
 
-    /**
-     * Configura el usuario logueado y carga sus dibujos
-     */
     public void setUsuarioLogueado(String nombre, RolUsuarios rol) {
         this.nombreUsuario = nombre;
         this.rolUsuario = rol;
@@ -70,9 +72,16 @@ public class MainMenuController {
         lblUsuario.setText("Usuario: " + nombre);
         lblRol.setText("Rol: " + rol.toString());
 
-        System.out.println("👤 Usuario configurado: " + nombre + " (" + rol + ")");
+        // Obtener ID del usuario
+        if (rol == RolUsuarios.NORMAL) {
+            UsuarioNormal usuario = gestorArchivoUsuario.buscarUsuarioNormal(nombre);
+            if (usuario != null) {
+                this.idUsuario = usuario.getIdUsuario();
+            }
+        }
 
-        // Mostrar botones de admin si corresponde
+        System.out.println("👤 Usuario configurado: " + nombre + " (ID: " + idUsuario + ", Rol: " + rol + ")");
+
         if (rol == RolUsuarios.ADMIN) {
             btnCrearDibujo.setVisible(true);
             btnCrearDibujo.setManaged(true);
@@ -80,13 +89,9 @@ public class MainMenuController {
             btnGestionarUsuarios.setManaged(true);
         }
 
-        // Cargar dibujos
         cargarDibujos();
     }
 
-    /**
-     * Carga todos los dibujos disponibles
-     */
     private void cargarDibujos() {
         try {
             vboxDibujos.getChildren().clear();
@@ -116,15 +121,11 @@ public class MainMenuController {
         }
     }
 
-    /**
-     * Obtiene los dibujos disponibles
-     */
     private ArrayList<Dibujo> obtenerDibujosDisponibles() {
         ArrayList<Dibujo> dibujos = new ArrayList<>();
 
         System.out.println("🔍 Buscando dibujos (IDs 1-100)...");
 
-        // Buscar dibujos del 1 al 100
         for (int i = 1; i <= 100; i++) {
             Dibujo d = gestorArchivoDibujo.buscarDibujoEnLista(i);
             if (d != null) {
@@ -142,9 +143,6 @@ public class MainMenuController {
         return dibujos;
     }
 
-    /**
-     * Muestra los dibujos en cards
-     */
     private void mostrarDibujos(ArrayList<Dibujo> dibujos) {
         vboxSinDibujos.setVisible(false);
         scrollPane.setVisible(true);
@@ -157,9 +155,6 @@ public class MainMenuController {
         }
     }
 
-    /**
-     * Crea un card visual para un dibujo
-     */
     private VBox crearCardDibujo(Dibujo dibujo) {
         VBox card = new VBox(15);
         card.getStyleClass().add("dibujo-card");
@@ -181,16 +176,23 @@ public class MainMenuController {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
+        // ← NUEVO: Badge de completado
+        boolean completado = dibujoCompletadoPorUsuario(dibujo);
+        if (completado) {
+            Label lblCompletado = new Label("✓ COMPLETADO");
+            lblCompletado.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: white; " +
+                    "-fx-background-color: #2e7d32; -fx-padding: 5 10; -fx-background-radius: 5;");
+            header.getChildren().add(lblCompletado);
+        }
+
         Label lblTamanio = new Label(dibujo.getAnchoCuadricula() + "x" + dibujo.getAnchoCuadricula());
         lblTamanio.setStyle("-fx-font-size: 12px; -fx-text-fill: #7f8c8d; " +
                 "-fx-background-color: #ecf0f1; -fx-padding: 5 10; -fx-background-radius: 5;");
 
         header.getChildren().addAll(lblNombre, spacer, lblTamanio);
 
-        // Preview del dibujo
         GridPane preview = crearPreviewDibujo(dibujo);
 
-        // Información adicional
         HBox info = new HBox(20);
         info.setAlignment(Pos.CENTER_LEFT);
 
@@ -202,11 +204,10 @@ public class MainMenuController {
 
         info.getChildren().addAll(lblColores, lblPixeles);
 
-        // Botones de acción
         HBox botones = new HBox(10);
         botones.setAlignment(Pos.CENTER_RIGHT);
 
-        Button btnColorear = new Button("🖌️ Colorear");
+        Button btnColorear = new Button(completado ? "🖌️ Volver a Colorear" : "🖌️ Colorear");
         btnColorear.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; " +
                 "-fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 5; " +
                 "-fx-cursor: hand;");
@@ -214,7 +215,6 @@ public class MainMenuController {
 
         botones.getChildren().add(btnColorear);
 
-        // Botones de admin
         if (rolUsuario == RolUsuarios.ADMIN) {
             Button btnEditar = new Button("✏️ Editar");
             btnEditar.setStyle("-fx-background-color: #f39c12; -fx-text-fill: white; " +
@@ -231,7 +231,6 @@ public class MainMenuController {
             botones.getChildren().addAll(btnEditar, btnEliminar);
         }
 
-        // Separador
         Separator separator = new Separator();
 
         card.getChildren().addAll(header, preview, separator, info, botones);
@@ -239,6 +238,23 @@ public class MainMenuController {
         return card;
     }
 
+    // ← NUEVO MÉTODO
+    private boolean dibujoCompletadoPorUsuario(Dibujo dibujo) {
+        if (rolUsuario != RolUsuarios.NORMAL) {
+            return false;
+        }
+
+        try {
+            UsuarioNormal usuario = gestorArchivoUsuario.buscarUsuarioNormal(idUsuario);
+            if (usuario != null) {
+                return usuario.buscarDibujoPintado(dibujo.getIdDibujo());
+            }
+        } catch (Exception e) {
+            System.err.println("Error al verificar si dibujo completado: " + e.getMessage());
+        }
+
+        return false;
+    }
     /**
      * Crea un preview visual del dibujo
      */
