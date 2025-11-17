@@ -97,7 +97,7 @@ public class UsuarioNormal extends Usuario {
 
 
 
-    /// metodos de DIBUJO CREADO
+    /// metodos de DIBUJO CREADO (si 'puedeCrear' == false -> retornan falso. El usuario deberá ser autorizado por un admin)
 
     public boolean ingresarIdDibujoCreado(int idDibujoCreado)
     {

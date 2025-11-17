@@ -1,17 +1,13 @@
-/*
-* Clase basada en el código de David
-* */
-
 package controllers;
 
 import models.Cuadricula;
 import models.Dibujo;
-import models.exceptions.MissingKeyOrValueException;
+import models.exceptions.InvalidColorException;
 import models.exceptions.MissingSearchException;
 
 public class GestorLienzo {
 
-    // Atributos estaticos
+    /// Atributos estaticos
 
     private static final int[] TAMANIOS_DISPONIBLES = {8, 16, 32, 48, 64};
     private static final String[] COLORES_PERMITIDOS = {
@@ -22,7 +18,7 @@ public class GestorLienzo {
 
 
 
-    // Atributos
+    /// Atributos
 
     private int tamanioActual;
     private String colorSeleccionado;
@@ -31,13 +27,14 @@ public class GestorLienzo {
 
 
 
-    // Constructores
+    /// Constructores
 
     public GestorLienzo() {
         this.tamanioActual = 32;
         this.colorSeleccionado = "#000000";
         this.paraPintar = false;
         this.dibujo = new Dibujo();
+        dibujo.setAnchoCuadricula(tamanioActual);
     }
 
     public GestorLienzo(Dibujo dibujo) {
@@ -45,6 +42,7 @@ public class GestorLienzo {
         this.colorSeleccionado = "#000000";
         this.paraPintar = true;
         this.dibujo = dibujo != null ? dibujo : new Dibujo();
+        dibujo.setAnchoCuadricula(tamanioActual);
     }
 
     public GestorLienzo(int tamanioActual, String colorSeleccionado, boolean paraPintar, Dibujo dibujo) {
@@ -52,11 +50,12 @@ public class GestorLienzo {
         this.colorSeleccionado = validarColorIngresado(colorSeleccionado) ? colorSeleccionado : "#000000";
         this.paraPintar = paraPintar;
         this.dibujo = dibujo != null ? dibujo : new Dibujo();
+        dibujo.setAnchoCuadricula(tamanioActual);
     }
 
 
 
-    // Getters y Setters
+    /// Getters y Setters
 
     public int getTamanioActual() {
         return tamanioActual;
@@ -105,7 +104,7 @@ public class GestorLienzo {
 
 
 
-    // Métodos de validación
+    /// Métodos de validación
 
     public boolean validarColorIngresado(String hxdColor) {
         if (hxdColor == null) return false;
@@ -125,31 +124,29 @@ public class GestorLienzo {
 
     // Metodos de dibujo
 
+    /// Sirve para abrir un dibujo existenete en el archivo para pintarlo
     public void abrirDibujoCreado(int idDibujo){
         dibujo = gestorArchivoDibujo.buscarDibujoEnLista(idDibujo);
     }
 
-    public void dibujarPixel(int ejeX, int ejeY) {
+    public void dibujarPixel(int ejeX, int ejeY) throws InvalidColorException {
         if (dibujo == null) {
             dibujo = new Dibujo();
         }
 
         // Asegurar que el color esté en la paleta
         if (!dibujo.estaColorEnMap(colorSeleccionado)) {
-            try {
-                dibujo.insertarColor(colorSeleccionado);
-            } catch (MissingKeyOrValueException e) {
-                e.printStackTrace();
-            }
+            dibujo.insertarColor(colorSeleccionado);
         }
 
+        // Si la ubicacion en el lienzo no está, se crea una cuadrícula nueva
         try {
             dibujo.cambiarColorCuadricula(ejeX, ejeY, colorSeleccionado);
         } catch (MissingSearchException e) {
             dibujo.ingresarCuadricula(new Cuadricula(ejeX, ejeY, colorSeleccionado));
+        } finally {
+            guardarDatos();
         }
-
-        guardarDatos();
     }
 
     public void borrarPixel(int ejeX, int ejeY) {
@@ -157,6 +154,7 @@ public class GestorLienzo {
             try {
                 dibujo.eliminarCuadricula(ejeX, ejeY);
             } catch (MissingSearchException e) {
+                System.err.println("No se pudo borrar el pixel:");
                 e.printStackTrace();
             }
 
@@ -181,6 +179,7 @@ public class GestorLienzo {
         this.dibujo = new Dibujo(0, 0, nombreDibujo, true, anchoCuadricula);
     }
 
+    /// Llama a guardar los datos de dibujo en el archivo de dibujos
     private void guardarDatos(){
         gestorArchivoDibujo.modificarDibujo(dibujo);
     }
