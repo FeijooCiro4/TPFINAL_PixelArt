@@ -53,10 +53,8 @@ public class RegisterViewController {
                 }
             });
 
-            System.out.println("✅ RegisterViewController inicializado correctamente");
-
         } catch (Exception e) {
-            System.err.println("❌ Error al inicializar RegisterViewController:");
+            System.err.println("Error al inicializar RegisterViewController:");
             e.printStackTrace();
             mostrarError("Error al inicializar el sistema: " + e.getMessage());
         }
@@ -69,10 +67,6 @@ public class RegisterViewController {
         String confirmarContrasenia = txtConfirmarContrasenia.getText();
         String tipoUsuario = cmbTipoUsuario.getValue();
 
-        System.out.println("\n🔐 Intentando registrar usuario:");
-        System.out.println("   - Usuario: " + usuario);
-        System.out.println("   - Tipo: " + tipoUsuario);
-
         if (!validarCampos(usuario, contrasenia, confirmarContrasenia, tipoUsuario)) {
             return;
         }
@@ -80,29 +74,23 @@ public class RegisterViewController {
         try {
             boolean exito = false;
 
-            // Registrar según el tipo de usuario seleccionado
             if (tipoUsuario.equals("Usuario Normal")) {
-                System.out.println("🔒 Registrando Usuario Normal (INACTIVO)...");
                 exito = gestorSesion.registroSesionUsuarioNormal(usuario, contrasenia, false);
             } else if (tipoUsuario.equals("Administrador")) {
-                System.out.println("🔒 Registrando SUPERADMIN (ACTIVO)...");
-                // Los admins se crean como SUPERADMIN y ACTIVOS directamente
                 exito = gestorArchivoUsuario.crearUsuarioAdmin(
                         usuario,
                         contrasenia,
-                        true, // ACTIVO
+                        true,
                         RolUsuarios.ADMIN,
                         PermisosAdmin.SUPERADMIN
                 );
             }
 
             if (exito) {
-                System.out.println("✅ Usuario registrado");
-
                 if (tipoUsuario.equals("Administrador")) {
-                    mostrarExito("✓ SUPERADMIN creado exitosamente!\n\nPuedes iniciar sesión inmediatamente.");
+                    mostrarExito("SUPERADMIN creado exitosamente!\n\nPuedes iniciar sesion inmediatamente.");
                 } else {
-                    mostrarExito("✓ Cuenta creada exitosamente!\n\nTu cuenta está PENDIENTE DE ACTIVACIÓN.\nUn administrador debe aprobarla para que puedas iniciar sesión.");
+                    mostrarExito("Cuenta creada exitosamente!\n\nTu cuenta esta PENDIENTE DE ACTIVACION.\nUn administrador debe aprobarla para que puedas iniciar sesion.");
                 }
 
                 new Thread(() -> {
@@ -114,12 +102,11 @@ public class RegisterViewController {
                     }
                 }).start();
             } else {
-                System.err.println("❌ Registro falló");
-                mostrarError("No se pudo registrar el usuario.\n• El nombre de usuario puede estar en uso\n• Verifique los requisitos");
+                mostrarError("No se pudo registrar el usuario.\nEl nombre de usuario puede estar en uso\nVerifique los requisitos");
             }
 
         } catch (Exception e) {
-            System.err.println("❌ Error durante el registro:");
+            System.err.println("Error durante el registro:");
             e.printStackTrace();
             mostrarError("Error al registrar usuario: " + e.getMessage());
         }
@@ -158,17 +145,17 @@ public class RegisterViewController {
         }
 
         if (contrasenia.length() <= 8) {
-            mostrarError("La contraseña debe tener más de 8 caracteres");
+            mostrarError("La contraseña debe tener mas de 8 caracteres");
             return false;
         }
 
         if (contarDigitos(contrasenia) <= 3) {
-            mostrarError("La contraseña debe contener más de 3 números");
+            mostrarError("La contraseña debe contener mas de 3 numeros");
             return false;
         }
 
         if (!tieneMayusculas(contrasenia)) {
-            mostrarError("La contraseña debe contener al menos una letra mayúscula");
+            mostrarError("La contraseña debe contener al menos una letra mayuscula");
             return false;
         }
 
@@ -181,10 +168,10 @@ public class RegisterViewController {
         boolean mayusculaOk = tieneMayusculas(contrasenia);
 
         if (longitudOk && digitosOk && mayusculaOk) {
-            lblContraseniaInfo.setText("✓ Contraseña válida");
+            lblContraseniaInfo.setText("Contraseña valida");
             lblContraseniaInfo.setStyle("-fx-text-fill: #27ae60;");
         } else {
-            lblContraseniaInfo.setText("Mínimo 9 caracteres, 4 números y 1 mayúscula");
+            lblContraseniaInfo.setText("Minimo 9 caracteres, 4 numeros y 1 mayuscula");
             lblContraseniaInfo.setStyle("-fx-text-fill: #7f8c8d;");
         }
     }
@@ -240,14 +227,14 @@ public class RegisterViewController {
             try {
                 scene.getStylesheets().add(getClass().getResource("/resources/styles/login.css").toExternalForm());
             } catch (Exception e) {
-                System.out.println("⚠ CSS no encontrado");
+                System.out.println("CSS no encontrado");
             }
 
             stage.setScene(scene);
             stage.setTitle("Login - Sistema de Dibujo");
 
         } catch (IOException e) {
-            System.err.println("❌ Error al volver al login:");
+            System.err.println("Error al volver al login:");
             e.printStackTrace();
             mostrarError("Error al volver al login: " + e.getMessage());
         }
@@ -273,7 +260,7 @@ public class RegisterViewController {
         txtConfirmarContrasenia.clear();
         cmbTipoUsuario.getSelectionModel().selectFirst();
         lblMensaje.setVisible(false);
-        lblContraseniaInfo.setText("Mínimo 9 caracteres, 4 números y 1 mayúscula");
+        lblContraseniaInfo.setText("Minimo 9 caracteres, 4 numeros y 1 mayuscula");
         lblContraseniaInfo.setStyle("-fx-text-fill: #7f8c8d;");
     }
 }

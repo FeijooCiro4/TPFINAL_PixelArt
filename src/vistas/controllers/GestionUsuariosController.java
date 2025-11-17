@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import models.Usuario;
@@ -13,7 +14,7 @@ import models.UsuarioAdministrador;
 import models.UsuarioNormal;
 import models.enumerators.PermisosAdmin;
 import models.enumerators.RolUsuarios;
-import javafx.scene.layout.GridPane;
+
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -51,7 +52,6 @@ public class GestionUsuariosController {
 
         lblPermisos.setText("Permisos: " + permisos);
 
-        // Configurar visibilidad según permisos
         switch (permisos) {
             case VISUALIZANTE:
                 btnCrearUsuario.setVisible(false);
@@ -78,7 +78,7 @@ public class GestionUsuariosController {
         });
 
         colActivo.setCellValueFactory(data ->
-                new SimpleStringProperty(data.getValue().isActivo() ? "✓ Activo" : "✗ Inactivo"));
+                new SimpleStringProperty(data.getValue().isActivo() ? "Activo" : "Inactivo"));
 
         colDibujos.setCellValueFactory(data -> {
             if (data.getValue() instanceof UsuarioNormal) {
@@ -89,7 +89,6 @@ public class GestionUsuariosController {
             return new SimpleStringProperty("-");
         });
 
-        // Columna de acciones
         colAcciones.setCellFactory(param -> new TableCell<>() {
             @Override
             protected void updateItem(Void item, boolean empty) {
@@ -110,16 +109,14 @@ public class GestionUsuariosController {
         HBox hbox = new HBox(5);
         hbox.setAlignment(Pos.CENTER);
 
-        // VISUALIZANTE: Solo ver
-        Button btnVer = new Button("👁");
+        Button btnVer = new Button("Ver");
         btnVer.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 5 10;");
         btnVer.setOnAction(e -> verDetalles(usuario));
         hbox.getChildren().add(btnVer);
 
-        // SOLICITARIO: Puede activar/desactivar
         if (permisosActuales == PermisosAdmin.SOLICITARIO || permisosActuales == PermisosAdmin.SUPERADMIN) {
             if (usuario.getRolUsuarios() == RolUsuarios.NORMAL) {
-                Button btnToggle = new Button(usuario.isActivo() ? "🔒" : "✓");
+                Button btnToggle = new Button(usuario.isActivo() ? "Desactivar" : "Activar");
                 btnToggle.setStyle("-fx-background-color: " +
                         (usuario.isActivo() ? "#e67e22" : "#27ae60") +
                         "; -fx-text-fill: white; -fx-padding: 5 10;");
@@ -128,13 +125,12 @@ public class GestionUsuariosController {
             }
         }
 
-        // SUPERADMIN: Todo
         if (permisosActuales == PermisosAdmin.SUPERADMIN) {
-            Button btnEditar = new Button("✏");
+            Button btnEditar = new Button("Editar");
             btnEditar.setStyle("-fx-background-color: #f39c12; -fx-text-fill: white; -fx-padding: 5 10;");
             btnEditar.setOnAction(e -> editarUsuario(usuario));
 
-            Button btnEliminar = new Button("🗑");
+            Button btnEliminar = new Button("Eliminar");
             btnEliminar.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 5 10;");
             btnEliminar.setOnAction(e -> eliminarUsuario(usuario));
 
@@ -149,7 +145,6 @@ public class GestionUsuariosController {
 
         ArrayList<Usuario> usuarios = new ArrayList<>();
 
-        // Cargar normales
         for (int i = 1; i <= 100; i++) {
             UsuarioNormal normal = gestor.buscarUsuarioNormal(i);
             if (normal != null) {
@@ -157,7 +152,6 @@ public class GestionUsuariosController {
             }
         }
 
-        // Cargar admins
         for (int i = 1; i <= 100; i++) {
             UsuarioAdministrador admin = gestor.buscarUsuarioAdmin(i);
             if (admin != null) {
@@ -189,7 +183,7 @@ public class GestionUsuariosController {
         if (usuario instanceof UsuarioNormal) {
             UsuarioNormal normal = (UsuarioNormal) usuario;
             detalles.append("Dibujos completados: ").append(normal.getDibujosPintados().size()).append("\n");
-            detalles.append("Puede crear: ").append(normal.isPuedeCrear() ? "Sí" : "No");
+            detalles.append("Puede crear: ").append(normal.isPuedeCrear() ? "Si" : "No");
         } else if (usuario instanceof UsuarioAdministrador) {
             UsuarioAdministrador admin = (UsuarioAdministrador) usuario;
             detalles.append("Permisos: ").append(admin.getNivelAdmin()).append("\n");
@@ -198,7 +192,7 @@ public class GestionUsuariosController {
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Detalles de Usuario");
-        alert.setHeaderText("Información de " + usuario.getNombre());
+        alert.setHeaderText("Informacion de " + usuario.getNombre());
         alert.setContentText(detalles.toString());
         alert.showAndWait();
     }
@@ -216,7 +210,6 @@ public class GestionUsuariosController {
     }
 
     private void editarUsuario(Usuario usuario) {
-        // Dialog para editar
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Editar Usuario");
         dialog.setHeaderText("Editando: " + usuario.getNombre());
@@ -277,8 +270,8 @@ public class GestionUsuariosController {
     private void eliminarUsuario(Usuario usuario) {
         Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
         confirmacion.setTitle("Eliminar Usuario");
-        confirmacion.setHeaderText("¿Eliminar usuario?");
-        confirmacion.setContentText("Usuario: " + usuario.getNombre() + "\n\nEsta acción no se puede deshacer.");
+        confirmacion.setHeaderText("Eliminar usuario?");
+        confirmacion.setContentText("Usuario: " + usuario.getNombre() + "\n\nEsta accion no se puede deshacer.");
 
         if (confirmacion.showAndWait().get() == ButtonType.OK) {
             if (usuario instanceof UsuarioNormal) {
@@ -314,8 +307,7 @@ public class GestionUsuariosController {
         grid.add(new Label("Tipo:"), 0, 2);
         grid.add(cmbTipo, 1, 2);
 
-        // ← AGREGAR: Requisitos
-        Label lblRequisitos = new Label("Mínimo 9 caracteres, 4 números y 1 mayúscula");
+        Label lblRequisitos = new Label("Minimo 9 caracteres, 4 numeros y 1 mayuscula");
         lblRequisitos.setStyle("-fx-font-size: 10px; -fx-text-fill: #666;");
         grid.add(lblRequisitos, 1, 3);
 
@@ -328,13 +320,12 @@ public class GestionUsuariosController {
             String password = txtPassword.getText();
 
             if (nombre.isEmpty() || password.isEmpty()) {
-                mostrarError("Campos vacíos");
+                mostrarError("Campos vacios");
                 return;
             }
 
-            // ← AGREGAR: Validación de contraseña
             if (password.length() <= 8) {
-                mostrarError("La contraseña debe tener más de 8 caracteres");
+                mostrarError("La contraseña debe tener mas de 8 caracteres");
                 return;
             }
 
@@ -346,12 +337,12 @@ public class GestionUsuariosController {
             }
 
             if (digitos <= 3) {
-                mostrarError("La contraseña debe tener más de 3 números");
+                mostrarError("La contraseña debe tener mas de 3 numeros");
                 return;
             }
 
             if (!tieneMayuscula) {
-                mostrarError("La contraseña debe tener al menos 1 mayúscula");
+                mostrarError("La contraseña debe tener al menos 1 mayuscula");
                 return;
             }
 
@@ -364,7 +355,7 @@ public class GestionUsuariosController {
 
             if (exito) {
                 cargarUsuarios();
-                mostrarInfo("Éxito", "Usuario creado. Inactivo por defecto.");
+                mostrarInfo("Exito", "Usuario creado. Inactivo por defecto.");
             } else {
                 mostrarError("Error al crear usuario");
             }

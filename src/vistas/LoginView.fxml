@@ -56,27 +56,6 @@
                            styleClass="text-field"/>
         </VBox>
 
-        <!-- Selector de Rol (Opcional - comentado por defecto) -->
-        <!--
-        <VBox spacing="5">
-            <Label text="Tipo de Usuario:">
-                <font>
-                    <Font size="14"/>
-                </font>
-            </Label>
-            <ComboBox fx:id="cmbRol"
-                     styleClass="combo-box"
-                     prefWidth="400">
-                <items>
-                    <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="Normal"/>
-                        <String fx:value="Administrador"/>
-                    </FXCollections>
-                </items>
-            </ComboBox>
-        </VBox>
-        -->
-
         <!-- Mensaje de error -->
         <Label fx:id="lblError"
                styleClass="error-label"

@@ -251,7 +251,7 @@ public class ColorearDibujoController {
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("¡Completado!");
-            alert.setHeaderText("🎉 ¡Dibujo Completado!");
+            alert.setHeaderText("Dibujo Completado!");
             alert.setContentText("Has terminado de colorear:\n\"" + dibujoActual.getNombreDibujo() + "\"\n\nGuardado automáticamente.");
             alert.showAndWait();
         } catch (Exception e) {

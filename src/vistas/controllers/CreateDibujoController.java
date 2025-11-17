@@ -83,10 +83,10 @@ public class CreateDibujoController {
 
         int tamanio = dibujo.getAnchoCuadricula();
 
-        // ← REMOVER el listener temporalmente
+        //  REMOVER el listener temporalmente
         cmbTamanio.setOnAction(null);
         cmbTamanio.setValue(tamanio + " x " + tamanio);
-        cmbTamanio.setOnAction(this::handleCambiarTamanio); // ← Volver a poner
+        cmbTamanio.setOnAction(this::handleCambiarTamanio); //  Volver a poner
 
         tamanioActual = tamanio;
 

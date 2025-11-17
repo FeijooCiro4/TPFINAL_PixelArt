@@ -18,7 +18,7 @@
                     <Insets top="20" right="30" bottom="10" left="30"/>
                 </padding>
 
-                <Label text="🎨 Sistema de Dibujo Pixel Art" styleClass="app-title">
+                <Label text="Sistema de Dibujo Pixel Art" styleClass="app-title">
                     <font>
                         <Font name="System Bold" size="24"/>
                     </font>
