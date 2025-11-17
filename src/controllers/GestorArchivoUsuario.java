@@ -27,15 +27,16 @@ public class GestorArchivoUsuario {
     private GestorArchivoDibujo gestorArchivoDibujo = new GestorArchivoDibujo();
 
     public GestorArchivoUsuario(){
-        if(ReadWriteOperations.archivoExiste(NAME_FILE_ADMINS)) {
+        if(ReadWriteOperations.fileExists(NAME_FILE_ADMINS)) {
             actualizarListaAdmins();
         }
 
-        if(ReadWriteOperations.archivoExiste(NAME_FILE_USERS)){
+        if(ReadWriteOperations.fileExists(NAME_FILE_USERS)){
             actualizarListaUsuariosNormales();
         }
     }
 
+    /// Metodo encargado de la creacion de un usuario normal, validando el rol ingresado, y si el nombre ingresado es único
     public boolean crearUsuarioNormal(String nombre, String contrasenia, boolean activo, RolUsuarios rolUsuarios, boolean puedeCrear){
         if(nombreUsuarioUnico(nombre) && rolUsuarios.equals(RolUsuarios.NORMAL)){
             ContraseniaHash contraseniaHash = GestorContrasenia.generarHashContrasenia(contrasenia);
@@ -57,6 +58,7 @@ public class GestorArchivoUsuario {
         return false;
     }
 
+    /// Metodo encargado de la creacion de un usuario administrador, validando el rol ingresado, y si el nombre ingresado es único
     public boolean crearUsuarioAdmin(String nombre, String contrasenia, boolean activo, RolUsuarios rolUsuarios, PermisosAdmin permisoAdmin){
         if(nombreUsuarioUnico(nombre) && rolUsuarios.equals(RolUsuarios.ADMIN)){
             ContraseniaHash contraseniaHash = GestorContrasenia.generarHashContrasenia(contrasenia);
@@ -77,6 +79,12 @@ public class GestorArchivoUsuario {
 
         return false;
     }
+
+
+    /**
+     * Los metodos de modificacion primero validan si el usuario existe. En caso de ser así,
+     * se sobreescribe el dato viejo del usuario con el nuevo en la coleccion.
+     */
 
     public void modificarUsuarioAdmin(UsuarioAdministrador administradorModificado){
         UsuarioAdministrador administradorAModificar = buscarUsuarioAdmin(administradorModificado.getIdUsuario());
@@ -100,6 +108,12 @@ public class GestorArchivoUsuario {
         }
     }
 
+
+    /**
+     * Los metodos de eliminacion primero validan si el usuario existe. En caso de ser así,
+     * se remueve el usuario indicado.
+     */
+
     public void eliminarUsuarioAdmin(int idUsuario){
         UsuarioAdministrador administradorAEliminar = buscarUsuarioAdmin(idUsuario);
 
@@ -120,6 +134,12 @@ public class GestorArchivoUsuario {
         }
     }
 
+
+    /**
+     * Los metodos de busqueda de usuarios generales itera sobre el set 'usuariosTotales'
+     * para validar si el id o el nombre coinciden con alguno en el archivo.
+     */
+
     public Usuario buscarUsuario(int idUsuario){
         for(Usuario usuario : usuariosTotales){
             if(usuario.getIdUsuario() == idUsuario){
@@ -137,6 +157,12 @@ public class GestorArchivoUsuario {
         }
         return null;
     }
+
+
+    /**
+     * Los metodos de busqueda de usuarios especificos itera sobre la lista correspondiente al tipo de usuario
+     * para validar si el id o el nombre coinciden con alguno en el archivo.
+     */
 
     public UsuarioNormal buscarUsuarioNormal(int idUsuario){
         for (UsuarioNormal normal : normales) {
@@ -181,11 +207,12 @@ public class GestorArchivoUsuario {
 
 
 
-    // Gestion de dibujos pintados y creados
+    /// Gestion de dibujos pintados y creados
 
     public void agregarDibujoPintado(int idPropietario, int idDibujo){
         UsuarioNormal usuarioNormal = buscarUsuarioNormal(idPropietario);
 
+        // Valida si existe el usuario antes de añadir el id del dibujo a su lista de dibujos pintados
         if(usuarioNormal != null && gestorArchivoDibujo.buscarDibujoEnLista(idDibujo) != null){
             usuarioNormal.ingresarIdDibujoPintado(idDibujo);
 
@@ -197,6 +224,7 @@ public class GestorArchivoUsuario {
     public void agregarDibujoCreado(int idPropietario, int idDibujo){
         UsuarioNormal usuarioNormal = buscarUsuarioNormal(idPropietario);
 
+        // Valida si existe el usuario antes de añadir el id del dibujo a su lista de dibujos creados
         if(usuarioNormal != null){
             usuarioNormal.ingresarIdDibujoCreado(idDibujo);
 
@@ -208,6 +236,10 @@ public class GestorArchivoUsuario {
     public void eliminarDibujoPintado(int idPropietario, int idDibujo){
         UsuarioNormal usuarioNormal = buscarUsuarioNormal(idPropietario);
 
+        /*
+         * Valida si existe el usuario antes de añadir el id del dibujo a su lista de dibujos pintados y
+         * valida si el dibujo está en el archivo.
+         */
         if(usuarioNormal != null && gestorArchivoDibujo.buscarDibujoEnLista(idDibujo) != null){
             usuarioNormal.eliminarDibujoPintado(idDibujo);
 
@@ -219,6 +251,10 @@ public class GestorArchivoUsuario {
     public void eliminarDibujoCreado(int idPropietario, int idDibujo){
         UsuarioNormal usuarioNormal = buscarUsuarioNormal(idPropietario);
 
+        /*
+         * Valida si existe el usuario antes de añadir el id del dibujo a su lista de dibujos creados y
+         * valida si el dibujo está en el archivo.
+         */
         if(usuarioNormal != null && gestorArchivoDibujo.buscarDibujoEnLista(idDibujo) != null){
             usuarioNormal.eliminarDibujoCreado(idDibujo);
 
@@ -228,11 +264,13 @@ public class GestorArchivoUsuario {
     }
 
 
-    // Gestion de acciones
+
+    /// Gestion de acciones
 
     public void agregarAccion(int idAdmin, String accion){
         UsuarioAdministrador administrador = buscarUsuarioAdmin(idAdmin);
 
+        // Valida si el administrador existe
         if(administrador != null){
             administrador.ingresarAccionAlRegistro(accion);
         }
@@ -241,6 +279,7 @@ public class GestorArchivoUsuario {
     public void eliminarAccion(int idAdmin, LocalDateTime idAccion, String accion){
         UsuarioAdministrador administrador = buscarUsuarioAdmin(idAdmin);
 
+        // Valida si el administrador existe
         if(administrador != null){
             administrador.eliminarAccionDelRegistro(idAccion, accion);
         }
@@ -248,7 +287,7 @@ public class GestorArchivoUsuario {
 
 
 
-    // Validadores y generadores
+    /// Validadores y generadores
 
     public boolean nombreUsuarioUnico(String nombreUsuario){
         for(Usuario usuario : usuariosTotales){
@@ -262,6 +301,7 @@ public class GestorArchivoUsuario {
         return usuariosTotales.size() + 1;
     }
 
+    /// Reescribe los archivos a partir de los datos de las colecciones
     private void guardarCambios(){
         if(administradores == null) this.administradores = new ArrayList<>();
         if(normales == null) this.normales = new ArrayList<>();
@@ -270,6 +310,7 @@ public class GestorArchivoUsuario {
         usuarioNormalDAO.listToFile(normales, NAME_FILE_USERS);
     }
 
+    /// Reescribe las colecciones a partir de los datos de los archvos
     private void actualizarListas(){
         this.usuariosTotales.clear();
 

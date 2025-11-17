@@ -88,9 +88,16 @@ public class UsuarioAdministrador extends Usuario {
 
 
 
-    /// metodos para el registro de las acciones
+    // metodos para el registro de las acciones
 
-    public void ingresarAccionAlRegistro(String accion) // Correcciones de Maxi
+    /**
+     * En base a la hora actual (quitando nanosegundos), se registra una accion
+     * en el map 'registroAcciones'.
+     * Si se da la improvable casualidad de que haya una acción exacta
+     * en fecha, se añade un segundo para que la fecha pudiera usarse
+     * como clase dentro del map.
+     * */
+    public void ingresarAccionAlRegistro(String accion)
     {
         LocalDateTime fechaHora = LocalDateTime.now().withNano(0);
 
@@ -102,6 +109,14 @@ public class UsuarioAdministrador extends Usuario {
         registroAcciones.put(fechaHora, accion);
     }
 
+    /**
+     * Se eliminará una accion del map 'registroAcciones' si hay una coincidncia
+     * con los parámeros:
+     * @param fechaHora es la llave dentro del map.
+     * @param accion es el valor dentro del map.
+     * @return true si la clave a borrar se ha encontrado, y el metodo 'remove' lo retornara.
+     * O retorna false si no hay ninguna clave coincidiente en el map o si el metodo 'remove' lo retornara.
+     * */
     public boolean eliminarAccionDelRegistro(LocalDateTime fechaHora, String accion)
     {
         LocalDateTime claveAborrar = null;
@@ -125,7 +140,13 @@ public class UsuarioAdministrador extends Usuario {
         registroAcciones.remove(fechaHora);
     }
 
-    public List<String> buscarAccionesDelDia(LocalDateTime fechaIngresada)  // Se lo ajustó a una búsqueda más precisa
+    /**
+     * Se busca, en base a una fecha y en el rando del día de la misma,
+     * la lista de acciones del administrador.
+     * El metodo 'plusDays' marcó el final del ultimo dia, y el metodo 'subMap'
+     * facilitó la búsqueda por rango horario entre el inicio y el fin del dia.
+     * */
+    public List<String> buscarAccionesDelDia(LocalDateTime fechaIngresada)
     {
         LocalDateTime inicioDia = fechaIngresada.toLocalDate().atStartOfDay();
         LocalDateTime finDia = inicioDia.plusDays(1);

@@ -60,7 +60,14 @@ public class Cuadricula implements Comparable<Cuadricula> {
 
 
 
-    /// metodos overrides
+    // Metodos overrides
+
+    /**
+     * Se elige no conciderar el atributo 'color' para los métodos 'equals', 'hashCode' y 'compareTo'
+     * debido a que es un atributo que estará en constante cambio y lo que verdaderamente define a
+     * una cuadrícula como única en un lienzo es su posicion (indiceX e indiceY).
+     * No sirve diferenciar, comparar o igualar un objeto 'Cuadricula' de otro considerando el color.
+     */
 
     @Override
     public boolean equals(Object o) {
