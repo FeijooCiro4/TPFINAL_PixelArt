@@ -142,6 +142,9 @@ public class GestionUsuariosController {
     private void cargarUsuarios() {
         tableUsuarios.getItems().clear();
 
+        // RECARGAR gestor desde archivo para obtener datos frescos
+        gestor = new GestorArchivoUsuario();
+
         ArrayList<Usuario> usuarios = new ArrayList<>();
 
         for (int i = 1; i <= 100; i++) {

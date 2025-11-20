@@ -65,7 +65,7 @@ public class UsuarioAdministradorMapper extends AbstractMapper<UsuarioAdministra
             String permisoStr = jsonObject.getString("PermisosAdmin");
             usuarioAdministrador.setNivelAdmin(PermisosAdmin.valueOf(permisoStr));
             usuarioAdministrador.setRegistroAcciones((TreeMap<LocalDateTime, String>) CollectionsMapper.jsonObjectToMap(
-                            jsonObject.getJSONObject("registroAcciones"), LocalDateTime.class, String.class));
+                    jsonObject.getJSONObject("registroAcciones"), LocalDateTime.class, String.class));
         } catch (JSONException e){
             System.err.println("Error al deserializar un administrador:");
             e.printStackTrace();

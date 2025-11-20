@@ -1,15 +1,7 @@
-/* ========================================
-   MAIN MENU STYLES
-   ======================================== */
-
 /* Contenedor principal */
 .main-container {
     -fx-background-color: #f5f7fa;
 }
-
-/* ========================================
-   HEADER
-   ======================================== */
 
 .header-container {
     -fx-background-color: white;

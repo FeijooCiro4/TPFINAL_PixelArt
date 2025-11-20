@@ -55,9 +55,9 @@ public class LoginViewController {
         }
 
         try {
-            Usuario usuarioEncontrado = gestorArchivoUsuario.buscarUsuario(usuario);
+            Usuario usuarioEncontrado = gestorArchivoUsuario.buscarUsuario(usuario, RolUsuarios.ADMIN);
             if (usuarioEncontrado == null) {
-                usuarioEncontrado = gestorArchivoUsuario.buscarUsuario(usuario);
+                usuarioEncontrado = gestorArchivoUsuario.buscarUsuario(usuario, RolUsuarios.NORMAL);
             }
 
             if (usuarioEncontrado == null) {
@@ -75,12 +75,12 @@ public class LoginViewController {
             boolean exito = false;
 
             if (usuarioEncontrado.getRolUsuarios() == RolUsuarios.ADMIN) {
-                exito = gestorSesion.inicioSesion(usuario, contrasenia);
+                exito = gestorSesion.inicioSesion(usuario, contrasenia, RolUsuarios.ADMIN);
                 if (exito) {
                     rolSeleccionado = RolUsuarios.ADMIN;
                 }
             } else {
-                exito = gestorSesion.inicioSesion(usuario, contrasenia);
+                exito = gestorSesion.inicioSesion(usuario, contrasenia, RolUsuarios.NORMAL);
                 if (exito) {
                     rolSeleccionado = RolUsuarios.NORMAL;
                 }
@@ -110,14 +110,14 @@ public class LoginViewController {
     @FXML
     private void handleRegistro(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/RegisterView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/RegisterView.fxml"));
             Parent root = loader.load();
 
             Stage stage = (Stage) linkRegistro.getScene().getWindow();
             Scene scene = new Scene(root);
 
             try {
-                scene.getStylesheets().add(getClass().getResource("/resources/styles/login.css").toExternalForm());
+                scene.getStylesheets().add(getClass().getResource("/vistas/recources/styles/login.css").toExternalForm());
             } catch (Exception e) {
                 System.out.println("CSS no encontrado");
             }
@@ -134,7 +134,7 @@ public class LoginViewController {
 
     private void abrirMenuPrincipal() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/MainMenuView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/MainMenuView.fxml"));
             Parent root = loader.load();
 
             MainMenuController controller = loader.getController();
@@ -144,7 +144,7 @@ public class LoginViewController {
             Scene scene = new Scene(root, 1000, 700);
 
             try {
-                scene.getStylesheets().add(getClass().getResource("/resources/styles/main.css").toExternalForm());
+                scene.getStylesheets().add(getClass().getResource("/vistas/recources/styles/main.css").toExternalForm());
             } catch (Exception e) {
                 System.out.println("CSS no encontrado");
             }

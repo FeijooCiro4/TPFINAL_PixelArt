@@ -17,8 +17,8 @@ public class GestorSesion {
      * @return true si el usuario existe y la contraseña es coincidiente con la del archivo.
      * @throws InvalidOrMissingHashPasswordException se lanza si el formato dela contraseña no es válido.
      */
-    public boolean inicioSesion(String nombreUsuario, String contraseniaIngresada) throws InvalidOrMissingHashPasswordException {
-        Usuario usuario = gestorArchivoUsuario.buscarUsuario(nombreUsuario);
+    public boolean inicioSesion(String nombreUsuario, String contraseniaIngresada, RolUsuarios rolUsuarios) throws InvalidOrMissingHashPasswordException {
+        Usuario usuario = gestorArchivoUsuario.buscarUsuario(nombreUsuario, rolUsuarios);
 
         if(usuario == null) return false;
 

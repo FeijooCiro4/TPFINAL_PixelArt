@@ -8,10 +8,9 @@ import java.util.ArrayList;
 
 public class GestorArchivoDibujo {
     private static final String NAME_FILE = "Dibujos.json";
-    private static GestorArchivoUsuario gestorArchivoUsuario = new GestorArchivoUsuario();
 
     private final DibujoDAO dibujoDAO = new DibujoDAO();
-    private ArrayList<Dibujo> dibujosGuardados = new ArrayList<>();
+    private ArrayList<Dibujo> dibusjosGuardados = new ArrayList<>();
 
     public GestorArchivoDibujo(){
         if(ReadWriteOperations.fileExists(NAME_FILE)) actualizarLista();
@@ -19,13 +18,12 @@ public class GestorArchivoDibujo {
 
     ///  Crea un dibujo si su propietario existe
     public void crearDibujo(int idPropietario, String nombreDibujo, boolean activo, int anchoCuadricula){
-        if(gestorArchivoUsuario.buscarUsuario(idPropietario) != null) {
-            int idGenerado = generarIdUnico();
-            dibujosGuardados.add(new Dibujo(idGenerado, idPropietario, nombreDibujo, activo, anchoCuadricula));
+        int idGenerado = generarIdUnico();
 
-            guardarCambios();
-            gestorArchivoUsuario.agregarDibujoCreado(idPropietario, idGenerado);
-        }
+        dibusjosGuardados.add(new Dibujo(idGenerado, idPropietario, nombreDibujo, activo, anchoCuadricula));
+
+        guardarCambios();
+        new GestorArchivoUsuario().agregarDibujoCreado(idPropietario, idPropietario);
     }
 
     ///  Modifica un dibujo si su id existe en la lista
@@ -34,8 +32,8 @@ public class GestorArchivoDibujo {
 
         if(dibujoAModificar != null){
             // Se sobreescribe en la lista
-            dibujosGuardados.remove(dibujoAModificar);
-            dibujosGuardados.add(dibujoModificado);
+            dibusjosGuardados.remove(dibujoAModificar);
+            dibusjosGuardados.add(dibujoModificado);
             guardarCambios();
         }
     }
@@ -45,7 +43,7 @@ public class GestorArchivoDibujo {
         Dibujo dibujoAEliminar = buscarDibujoEnLista(idDibujo);
 
         if(dibujoAEliminar != null){
-            dibujosGuardados.remove(dibujoAEliminar);
+            dibusjosGuardados.remove(dibujoAEliminar);
             guardarCambios();
             return true;
         }
@@ -54,7 +52,7 @@ public class GestorArchivoDibujo {
     }
 
     public Dibujo buscarDibujoEnLista(int idDibujo){
-        for(Dibujo dibujo : dibujosGuardados){
+        for(Dibujo dibujo : dibusjosGuardados){
             if(dibujo.getIdDibujo() == idDibujo) return dibujo;
         }
         return null;
@@ -65,16 +63,16 @@ public class GestorArchivoDibujo {
     // Validadores y generadores
 
     private int generarIdUnico(){
-        return dibujosGuardados.size() + 1;
+        return dibusjosGuardados.size() + 1;
     }
 
     /// Sobreescribe el archivo de dibujos con los datos de la lista
     private void guardarCambios(){
-        dibujoDAO.listToFile(dibujosGuardados, NAME_FILE);
+        dibujoDAO.listToFile(dibusjosGuardados, NAME_FILE);
     }
 
     /// Sobreescribe la lista de dibujos con los datos del archivo
     private void actualizarLista(){
-        this.dibujosGuardados = (ArrayList<Dibujo>) dibujoDAO.fileToList(NAME_FILE);
+        this.dibusjosGuardados = (ArrayList<Dibujo>) dibujoDAO.fileToList(NAME_FILE);
     }
 }

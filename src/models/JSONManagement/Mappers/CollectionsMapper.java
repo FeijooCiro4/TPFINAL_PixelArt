@@ -138,7 +138,7 @@ public class CollectionsMapper {
 
     private static boolean isCustomObject(Object obj) {
         return !(obj instanceof Number || obj instanceof Boolean || obj instanceof String ||
-                obj instanceof Map || obj instanceof Set || obj instanceof java.util.List ||
+                obj instanceof Map || obj instanceof Set || obj instanceof List ||
                 obj.getClass().isArray());
     }
 

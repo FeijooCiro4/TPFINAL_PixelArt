@@ -12,6 +12,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class RegisterViewController {
 
@@ -91,14 +92,14 @@ public class RegisterViewController {
                     mostrarExito("Cuenta creada exitosamente!\n\nTu cuenta esta PENDIENTE DE ACTIVACION.\nUn administrador debe aprobarla para que puedas iniciar sesion.");
                 }
 
-                new Thread(() -> {
+                /*new Thread(() -> {
                     try {
                         Thread.sleep(4000);
                         javafx.application.Platform.runLater(this::volverAlLogin);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                }).start();
+                }).start();*/
             } else {
                 mostrarError("No se pudo registrar el usuario.\nEl nombre de usuario puede estar en uso\nVerifique los requisitos");
             }
@@ -211,19 +212,15 @@ public class RegisterViewController {
 
     @FXML
     private void handleVolverLogin(ActionEvent event) {
-        volverAlLogin();
-    }
-
-    private void volverAlLogin() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/LoginView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/LoginView.fxml"));
             Parent root = loader.load();
 
             Stage stage = (Stage) linkLogin.getScene().getWindow();
             Scene scene = new Scene(root);
 
             try {
-                scene.getStylesheets().add(getClass().getResource("/resources/styles/login.css").toExternalForm());
+                scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/vistas/recources/styles/login.css")).toExternalForm());
             } catch (Exception e) {
                 System.out.println("CSS no encontrado");
             }
@@ -237,6 +234,30 @@ public class RegisterViewController {
             mostrarError("Error al volver al login: " + e.getMessage());
         }
     }
+
+    /*private void volverAlLogin() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/LoginView.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) linkLogin.getScene().getWindow();
+            Scene scene = new Scene(root);
+
+            try {
+                scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/vistas/recources/styles/login.css")).toExternalForm());
+            } catch (Exception e) {
+                System.out.println("CSS no encontrado");
+            }
+
+            stage.setScene(scene);
+            stage.setTitle("Login - Sistema de Dibujo");
+
+        } catch (IOException e) {
+            System.err.println("Error al volver al login:");
+            e.printStackTrace();
+            mostrarError("Error al volver al login: " + e.getMessage());
+        }
+    }*/
 
     private void mostrarError(String mensaje) {
         lblMensaje.setText(mensaje);

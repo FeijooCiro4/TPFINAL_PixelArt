@@ -10,15 +10,15 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         try {
             // Cargar el archivo FXML de Login
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/LoginView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/LoginView.fxml"));
             Parent root = loader.load();
 
             // Crear la escena
             Scene scene = new Scene(root, 500, 600);
 
-            // Cargar CSS (opcional)
+            // Cargar CSS
             try {
-                scene.getStylesheets().add(getClass().getResource("/resources/styles/login.css").toExternalForm());
+                scene.getStylesheets().add(getClass().getResource("/vistas/recources/styles/login.css").toExternalForm());
                 System.out.println("CSS cargado correctamente");
             } catch (Exception e) {
                 System.out.println("Advertencia: No se pudo cargar el CSS - " + e.getMessage());

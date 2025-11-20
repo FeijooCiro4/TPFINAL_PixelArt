@@ -150,20 +150,20 @@ public class Dibujo {
             throw new InvalidColorException("El color no tiene un formato valido");
         }
 
-       Integer claveColor = null;
+        Integer claveColor = null;
 
-       for (Map.Entry<Integer, String> entry : clavesColores.entrySet()) {
-           if (entry.getValue().equalsIgnoreCase(color)) {
-               claveColor = entry.getKey();
-               break;
-           }
-       }
+        for (Map.Entry<Integer, String> entry : clavesColores.entrySet()) {
+            if (entry.getValue().equalsIgnoreCase(color)) {
+                claveColor = entry.getKey();
+                break;
+            }
+        }
 
-       if (claveColor == null) {
-           throw new InvalidColorException("El color ingresado no se encuentra en la seleccion");
-       }
+        if (claveColor == null) {
+            throw new InvalidColorException("El color ingresado no se encuentra en la seleccion");
+        }
 
-       clavesColores.remove(claveColor);
+        clavesColores.remove(claveColor);
     }
 
 

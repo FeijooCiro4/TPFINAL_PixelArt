@@ -69,15 +69,20 @@ public class MainMenuController {
         lblUsuario.setText("Usuario: " + nombre);
         lblRol.setText("Rol: " + rol.toString());
 
-        // Obtener ID del usuario
+        // Obtener ID del usuario (PARA AMBOS ROLES)
         if (rol == RolUsuarios.NORMAL) {
             UsuarioNormal usuario = gestorArchivoUsuario.buscarUsuarioNormal(nombre);
             if (usuario != null) {
                 this.idUsuario = usuario.getIdUsuario();
             }
+        } else if (rol == RolUsuarios.ADMIN) {
+            UsuarioAdministrador admin = gestorArchivoUsuario.buscarUsuarioAdmin(nombre);
+            if (admin != null) {
+                this.idUsuario = admin.getIdUsuario();
+            }
         }
 
-        System.out.println("👤 Usuario configurado: " + nombre + " (ID: " + idUsuario + ", Rol: " + rol + ")");
+        System.out.println("Usuario configurado: " + nombre + " (ID: " + idUsuario + ", Rol: " + rol + ")");
 
         if (rol == RolUsuarios.ADMIN) {
             btnCrearDibujo.setVisible(true);
@@ -88,6 +93,7 @@ public class MainMenuController {
 
         cargarDibujos();
     }
+
 
     private void cargarDibujos() {
         try {
@@ -349,19 +355,18 @@ public class MainMenuController {
         try {
             System.out.println("🎨 Abriendo ventana de creación...");
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/CreateDibujoView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/CreateDibujoView.fxml"));
             Parent root = loader.load();
 
             // Pasar el ID del usuario al controlador
             CreateDibujoController controller = loader.getController();
-            // TODO: Obtener el ID real del usuario desde GestorArchivoUsuario
-            controller.setUsuarioCreador(1); // Por ahora ID hardcodeado
+            controller.setUsuarioCreador(this.idUsuario);
 
             Stage stage = new Stage();
             Scene scene = new Scene(root);
 
             try {
-                scene.getStylesheets().add(getClass().getResource("/resources/styles/create.css").toExternalForm());
+                scene.getStylesheets().add(getClass().getResource("/vistas/recources/styles/create.css").toExternalForm());
             } catch (Exception e) {
                 System.out.println("⚠ CSS no encontrado");
             }
@@ -394,7 +399,7 @@ public class MainMenuController {
         try {
             System.out.println("👥 Abriendo gestión de usuarios...");
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/GestionUsuariosView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/GestionUsuariosView.fxml"));
             Parent root = loader.load();
 
             GestionUsuariosController controller = loader.getController();
@@ -437,14 +442,14 @@ public class MainMenuController {
             if (confirmacion.showAndWait().get() == ButtonType.OK) {
                 System.out.println("👋 Cerrando sesión de: " + nombreUsuario);
 
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/LoginView.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/LoginView.fxml"));
                 Parent root = loader.load();
 
                 Stage stage = (Stage) btnCerrarSesion.getScene().getWindow();
                 Scene scene = new Scene(root);
 
                 try {
-                    scene.getStylesheets().add(getClass().getResource("/resources/styles/login.css").toExternalForm());
+                    scene.getStylesheets().add(getClass().getResource("/vistas/recources/styles/login.css").toExternalForm());
                 } catch (Exception e) {
                     System.out.println("⚠ CSS no encontrado");
                 }
@@ -474,19 +479,18 @@ public class MainMenuController {
         try {
             System.out.println("🖌️ Abriendo dibujo para colorear: " + dibujo.getNombreDibujo());
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/ColorearDibujoView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/ColorearDibujoView.fxml"));
             Parent root = loader.load();
 
             // Pasar el dibujo y el usuario al controlador
             ColorearDibujoController controller = loader.getController();
-            // TODO: Obtener el ID real del usuario logueado
-            controller.setDibujoYUsuario(dibujo, 1); // Por ahora ID hardcodeado
+            controller.setDibujoYUsuario(dibujo, this.idUsuario);
 
             Stage stage = new Stage();
             Scene scene = new Scene(root);
 
             try {
-                scene.getStylesheets().add(getClass().getResource("/resources/styles/main.css").toExternalForm());
+                scene.getStylesheets().add(getClass().getResource("/vistas/recources/styles/main.css").toExternalForm());
             } catch (Exception e) {
                 System.out.println("⚠ CSS no encontrado");
             }
@@ -515,7 +519,7 @@ public class MainMenuController {
         try {
             System.out.println("✏️ Editando dibujo: " + dibujo.getNombreDibujo());
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/CreateDibujoView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/CreateDibujoView.fxml"));
             Parent root = loader.load();
 
             CreateDibujoController controller = loader.getController();

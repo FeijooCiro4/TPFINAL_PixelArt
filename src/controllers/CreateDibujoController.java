@@ -47,7 +47,6 @@ public class CreateDibujoController {
     private ArrayList<String> paletaPersonalizada;
     private int idUsuarioCreador;
 
-    // Variables para edición
     private boolean modoEdicion = false;
     private int idDibujoEditando = -1;
 
@@ -57,10 +56,8 @@ public class CreateDibujoController {
         pixelesMarcados = new HashMap<>();
         paletaPersonalizada = new ArrayList<>();
 
-        String[] coloresPredefinidos = GestorLienzo.getColoresPermitidos();
-        for (String color : coloresPredefinidos) {
-            paletaPersonalizada.add(color);
-        }
+        paletaPersonalizada.add("#000000");
+        paletaPersonalizada.add("#FFFFFF");
 
         inicializarControles();
         configurarHerramientas();
@@ -73,34 +70,54 @@ public class CreateDibujoController {
     }
 
     public void setDibujoParaEditar(Dibujo dibujo) {
-        this.modoEdicion = true;
-        this.idDibujoEditando = dibujo.getIdDibujo();
+        try {
+            System.out.println("Cargando dibujo para editar: " + dibujo.getNombreDibujo());
 
-        lblTitulo.setText("Editar: " + dibujo.getNombreDibujo());
-        txtNombreDibujo.setText(dibujo.getNombreDibujo());
+            this.modoEdicion = true;
+            this.idDibujoEditando = dibujo.getIdDibujo();
 
-        int tamanio = dibujo.getAnchoCuadricula();
+            lblTitulo.setText("Editar: " + dibujo.getNombreDibujo());
+            txtNombreDibujo.setText(dibujo.getNombreDibujo());
 
-        //  REMOVER el listener temporalmente
-        cmbTamanio.setOnAction(null);
-        cmbTamanio.setValue(tamanio + " x " + tamanio);
-        cmbTamanio.setOnAction(this::handleCambiarTamanio); //  Volver a poner
+            int tamanio = dibujo.getAnchoCuadricula();
+            System.out.println("Tamaño del dibujo: " + tamanio);
 
-        tamanioActual = tamanio;
+            // Desactivar listener temporalmente
+            cmbTamanio.setOnAction(null);
+            cmbTamanio.setValue(tamanio + " x " + tamanio);
+            tamanioActual = tamanio;
+            lblInfoTamanio.setText(tamanio * tamanio + " pixeles");
 
-        paletaPersonalizada.clear();
-        paletaPersonalizada.addAll(dibujo.getClavesColores().values());
-        generarPaletaColores();
+            // Reactivar listener
+            cmbTamanio.setOnAction(this::handleCambiarTamanio);
 
-        pixelesMarcados.clear();
-        for (Cuadricula c : dibujo.getCuadriculas()) {
-            String key = c.getIndiceX() + "," + c.getIndiceY();
-            pixelesMarcados.put(key, c.getColor());
+            // Cargar paleta
+            paletaPersonalizada.clear();
+            paletaPersonalizada.addAll(dibujo.getClavesColores().values());
+            System.out.println("Colores cargados: " + paletaPersonalizada.size());
+            generarPaletaColores();
+
+            // Cargar píxeles
+            pixelesMarcados.clear();
+            for (Cuadricula c : dibujo.getCuadriculas()) {
+                String key = c.getIndiceX() + "," + c.getIndiceY();
+                pixelesMarcados.put(key, c.getColor());
+            }
+            System.out.println("Pixeles cargados: " + pixelesMarcados.size());
+
+            // Generar canvas con los píxeles cargados
+            generarCanvas();
+            actualizarEstadisticas();
+
+            System.out.println("Dibujo cargado correctamente para edicion");
+
+        } catch (Exception e) {
+            System.err.println("Error al cargar dibujo para editar: " + e.getMessage());
+            e.printStackTrace();
+            mostrarError("Error al cargar dibujo: " + e.getMessage());
         }
-
-        generarCanvas();
-        actualizarEstadisticas();
     }
+
     private void inicializarControles() {
         int[] tamanios = GestorLienzo.getTamaniosDisponibles();
         String[] opciones = new String[tamanios.length];
@@ -252,7 +269,7 @@ public class CreateDibujoController {
 
     private void eliminarColorDePaleta(int index) {
         if (paletaPersonalizada.size() <= 2) {
-            mostrarAdvertencia("Error", "Mínimo 2 colores");
+            mostrarAdvertencia("Error", "Minimo 2 colores");
             return;
         }
 
@@ -263,7 +280,7 @@ public class CreateDibujoController {
         if (colorEnUso) {
             Alert confirmacion = new Alert(Alert.AlertType.WARNING);
             confirmacion.setTitle("Color en uso");
-            confirmacion.setContentText("Los píxeles se cambiarán al primer color. ¿Continuar?");
+            confirmacion.setContentText("Los pixeles se cambiaran al primer color. Continuar?");
 
             if (confirmacion.showAndWait().get() != ButtonType.OK) return;
 
@@ -293,6 +310,18 @@ public class CreateDibujoController {
 
     @FXML
     private void handleCambiarTamanio(ActionEvent event) {
+        // No permitir cambio de tamaño en modo edición
+        if (modoEdicion) {
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setTitle("Accion no permitida");
+            alerta.setContentText("No se puede cambiar el tamaño en modo edicion");
+            alerta.showAndWait();
+
+            // Restaurar el tamaño original
+            cmbTamanio.setValue(tamanioActual + " x " + tamanioActual);
+            return;
+        }
+
         String seleccion = cmbTamanio.getValue();
         if (seleccion != null) {
             int tamanio = Integer.parseInt(seleccion.split(" ")[0]);
@@ -303,7 +332,7 @@ public class CreateDibujoController {
     private void cambiarTamanioCanvas(int tamanio) {
         tamanioActual = tamanio;
         pixelesMarcados.clear();
-        lblInfoTamanio.setText(tamanio * tamanio + " píxeles");
+        lblInfoTamanio.setText(tamanio * tamanio + " pixeles");
         generarCanvas();
         actualizarEstadisticas();
     }
@@ -370,7 +399,7 @@ public class CreateDibujoController {
     private void actualizarEstadisticas() {
         int total = tamanioActual * tamanioActual;
         int marcados = pixelesMarcados.size();
-        lblPixelesMarcados.setText(marcados + " / " + total + " píxeles marcados");
+        lblPixelesMarcados.setText(marcados + " / " + total + " pixeles marcados");
     }
 
     @FXML
@@ -393,63 +422,98 @@ public class CreateDibujoController {
         }
 
         if (pixelesMarcados.isEmpty()) {
-            mostrarAdvertencia("Error", "Canvas vacío");
+            mostrarAdvertencia("Error", "Canvas vacio");
             return;
         }
 
         try {
             if (modoEdicion) {
-                // ACTUALIZAR dibujo existente
-                Dibujo dibujo = gestorArchivoDibujo.buscarDibujoEnLista(idDibujoEditando);
-                if (dibujo != null) {
-                    dibujo.setNombreDibujo(nombreDibujo);
-                    dibujo.setAnchoCuadricula(tamanioActual);
+                System.out.println("Guardando cambios en modo edicion...");
 
-                    // Limpiar paleta y cuadrículas
-                    dibujo.getClavesColores().clear();
-                    dibujo.getCuadriculas().clear();
+                // ELIMINAR el dibujo viejo
+                gestorArchivoDibujo.eliminarDibujo(idDibujoEditando);
+                Thread.sleep(100);
 
-                    // Agregar nueva paleta
-                    for (String color : paletaPersonalizada) {
-                        dibujo.insertarColor(color);
-                    }
-
-                    // Agregar nuevas cuadrículas
-                    for (Map.Entry<String, String> entry : pixelesMarcados.entrySet()) {
-                        String[] coords = entry.getKey().split(",");
-                        int x = Integer.parseInt(coords[0]);
-                        int y = Integer.parseInt(coords[1]);
-                        dibujo.ingresarCuadricula(new Cuadricula(x, y, entry.getValue()));
-                    }
-
-                    gestorArchivoDibujo.modificarDibujo(dibujo);
-                    mostrarExito("Éxito", "Dibujo actualizado");
-                    cerrarVentana();
-                }
-            } else {
-                // CREAR nuevo dibujo
+                // CREAR uno nuevo con los mismos datos
                 gestorArchivoDibujo.crearDibujo(idUsuarioCreador, nombreDibujo, true, tamanioActual);
+                Thread.sleep(100);
+
+                // Recargar gestor
+                gestorArchivoDibujo = new GestorArchivoDibujo();
+                Dibujo dibujoNuevo = buscarDibujoPorNombre(nombreDibujo);
+
+                if (dibujoNuevo == null) {
+                    mostrarError("Error al actualizar el dibujo");
+                    return;
+                }
+
+                System.out.println("Nuevo dibujo creado con ID: " + dibujoNuevo.getIdDibujo());
+
+                // Agregar paleta
+                System.out.println("Agregando " + paletaPersonalizada.size() + " colores...");
+                for (String color : paletaPersonalizada) {
+                    try {
+                        dibujoNuevo.insertarColor(color);
+                    } catch (Exception e) {
+                        System.err.println("Error insertando color: " + e.getMessage());
+                    }
+                }
+
+                // Agregar cuadriculas
+                System.out.println("Agregando " + pixelesMarcados.size() + " cuadriculas...");
+                for (Map.Entry<String, String> entry : pixelesMarcados.entrySet()) {
+                    String[] coords = entry.getKey().split(",");
+                    int x = Integer.parseInt(coords[0]);
+                    int y = Integer.parseInt(coords[1]);
+                    dibujoNuevo.ingresarCuadricula(new Cuadricula(x, y, entry.getValue()));
+                }
+
+                gestorArchivoDibujo.modificarDibujo(dibujoNuevo);
+                System.out.println("Dibujo actualizado correctamente");
+
+                mostrarExito("Exito", "Dibujo actualizado correctamente");
+                cerrarVentana();
+
+            } else {
+                System.out.println("Creando nuevo dibujo...");
+
+                gestorArchivoDibujo.crearDibujo(idUsuarioCreador, nombreDibujo, true, tamanioActual);
+                Thread.sleep(100);
+
+                gestorArchivoDibujo = new GestorArchivoDibujo();
                 Dibujo dibujoCreado = buscarDibujoPorNombre(nombreDibujo);
 
-                if (dibujoCreado != null) {
-                    for (String color : paletaPersonalizada) {
-                        dibujoCreado.insertarColor(color);
-                    }
-
-                    for (Map.Entry<String, String> entry : pixelesMarcados.entrySet()) {
-                        String[] coords = entry.getKey().split(",");
-                        int x = Integer.parseInt(coords[0]);
-                        int y = Integer.parseInt(coords[1]);
-                        dibujoCreado.ingresarCuadricula(new Cuadricula(x, y, entry.getValue()));
-                    }
-
-                    gestorArchivoDibujo.modificarDibujo(dibujoCreado);
-                    mostrarExito("Éxito", "Dibujo creado");
-                    limpiarTodo();
+                if (dibujoCreado == null) {
+                    mostrarError("No se pudo crear el dibujo");
+                    return;
                 }
+
+                System.out.println("Dibujo creado con ID: " + dibujoCreado.getIdDibujo());
+
+                for (String color : paletaPersonalizada) {
+                    try {
+                        dibujoCreado.insertarColor(color);
+                    } catch (Exception e) {
+                        System.err.println("Error insertando color: " + e.getMessage());
+                    }
+                }
+
+                for (Map.Entry<String, String> entry : pixelesMarcados.entrySet()) {
+                    String[] coords = entry.getKey().split(",");
+                    int x = Integer.parseInt(coords[0]);
+                    int y = Integer.parseInt(coords[1]);
+                    dibujoCreado.ingresarCuadricula(new Cuadricula(x, y, entry.getValue()));
+                }
+
+                gestorArchivoDibujo.modificarDibujo(dibujoCreado);
+                mostrarExito("Exito", "Dibujo creado");
+                limpiarTodo();
             }
+
         } catch (Exception e) {
-            mostrarError("Error: " + e.getMessage());
+            System.err.println("Error al guardar: " + e.getMessage());
+            e.printStackTrace();
+            mostrarError("Error al guardar: " + e.getMessage());
         }
     }
 
@@ -466,7 +530,7 @@ public class CreateDibujoController {
     @FXML
     private void handleLimpiar(ActionEvent event) {
         Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmacion.setContentText("¿Limpiar canvas?");
+        confirmacion.setContentText("Limpiar canvas?");
 
         if (confirmacion.showAndWait().get() == ButtonType.OK) {
             pixelesMarcados.clear();
@@ -486,7 +550,7 @@ public class CreateDibujoController {
     private void handleVolver(ActionEvent event) {
         if (!pixelesMarcados.isEmpty()) {
             Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-            confirmacion.setContentText("¿Salir sin guardar?");
+            confirmacion.setContentText("Salir sin guardar?");
 
             if (confirmacion.showAndWait().get() != ButtonType.OK) {
                 return;
